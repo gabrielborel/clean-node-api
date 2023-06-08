@@ -1,13 +1,13 @@
 {
   "name": "ts-tdd-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "An API to practice TDD, Clean Architecture and SOLID principles using TypeScript",
   "main": "index.js",
   "scripts": {
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Gabriel Borel",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.2",
