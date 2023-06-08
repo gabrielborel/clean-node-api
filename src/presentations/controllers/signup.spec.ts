@@ -83,7 +83,6 @@ describe("SignUp Controller", () => {
   test("should call EmailValidator with correct email", () => {
     const { sut, emailValidatorStub } = makeSut();
     const isValidSpy = jest.spyOn(emailValidatorStub, "validate");
-
     const request = {
       body: {
         name: "any_name",
