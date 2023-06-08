@@ -1,10 +1,11 @@
 export default {
   roots: ["<rootDir>/src"],
   collectCoverageFrom: ["<rootDir>/src/**/*.ts"],
-  collectCoverage: false,
+  collectCoverage: true,
   coverageDirectory: "coverage",
   coverageProvider: "v8",
   transform: {
     ".+\\.ts$": "ts-jest",
   },
+  testMatch: ["**/*.test.ts"],
 };
