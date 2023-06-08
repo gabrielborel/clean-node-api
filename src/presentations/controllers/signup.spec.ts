@@ -65,7 +65,7 @@ describe("SignUp Controller", () => {
     expect(response.body).toEqual(new MissingParamError("password"));
   });
 
-  test("shoudl return 400 if a invalid email is provided", () => {
+  test("should return 400 if a invalid email is provided", () => {
     const { sut, emailValidatorStub } = makeSut();
     jest.spyOn(emailValidatorStub, "validate").mockReturnValueOnce(false);
     const request = {
