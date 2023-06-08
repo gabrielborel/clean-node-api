@@ -3,6 +3,7 @@ export class SignUpController {
     if (request.body.name === "") {
       return {
         statusCode: 400,
+        body: new Error("name is required"),
       };
     }
   }
