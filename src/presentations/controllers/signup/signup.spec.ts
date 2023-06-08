@@ -124,12 +124,10 @@ describe("SignUp Controller", () => {
   });
 
   test("should return 500 if EmailValidator throws", () => {
-    const emailValidatorStub = makeEmailValidator();
-    const createAccountStub = makeCreateAccount();
+    const { sut, emailValidatorStub } = makeSut();
     jest.spyOn(emailValidatorStub, "validate").mockImplementationOnce(() => {
       throw new Error();
     });
-    const sut = new SignUpController(emailValidatorStub, createAccountStub);
     const request = {
       body: {
         name: "any_name",
@@ -158,5 +156,22 @@ describe("SignUp Controller", () => {
       email: "any_email@mail.com",
       password: "any_password",
     });
+  });
+
+  test("should return 500 if CreateAccount throws", () => {
+    const { sut, createAccountStub } = makeSut();
+    jest.spyOn(createAccountStub, "create").mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const request = {
+      body: {
+        name: "any_name",
+        email: "invalid_email",
+        password: "any_password",
+      },
+    };
+    const response = sut.handle(request);
+    expect(response.statusCode).toBe(500);
+    expect(response.body).toEqual(new ServerError());
   });
 });
