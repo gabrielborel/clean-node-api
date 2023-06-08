@@ -1,3 +1,8 @@
+import { AccountModel } from "../../domain/models/account";
+import {
+  CreateAccount,
+  CreateAccountModel,
+} from "../../domain/use-cases/create-account";
 import { InvalidParamError, MissingParamError, ServerError } from "../errors";
 import { EmailValidator } from "../protocols";
 import { SignUpController } from "./signup";
@@ -5,20 +10,27 @@ import { SignUpController } from "./signup";
 interface SutType {
   sut: SignUpController;
   emailValidatorStub: EmailValidator;
+  createAccountStub: CreateAccount;
 }
 
-const makeEmailValidator = (): EmailValidator => {
-  class EmailValidatorStub {
-    validate(email: string): boolean {
-      return true;
+const makeCreateAccount = (): CreateAccount => {
+  class CreateAccountStub implements CreateAccount {
+    create(account: CreateAccountModel): AccountModel {
+      return {
+        id: "valid_id",
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      };
     }
   }
-  return new EmailValidatorStub();
+  return new CreateAccountStub();
 };
-const makeEmailValidatorWithError = (): EmailValidator => {
-  class EmailValidatorStub {
+
+const makeEmailValidator = (): EmailValidator => {
+  class EmailValidatorStub implements EmailValidator {
     validate(email: string): boolean {
-      throw new Error();
+      return true;
     }
   }
   return new EmailValidatorStub();
@@ -26,10 +38,12 @@ const makeEmailValidatorWithError = (): EmailValidator => {
 
 const makeSut = (): SutType => {
   const emailValidatorStub = makeEmailValidator();
-  const sut = new SignUpController(emailValidatorStub);
+  const createAccountStub = makeCreateAccount();
+  const sut = new SignUpController(emailValidatorStub, createAccountStub);
   return {
     sut,
     emailValidatorStub,
+    createAccountStub,
   };
 };
 
@@ -107,10 +121,11 @@ describe("SignUp Controller", () => {
 
   test("should return 500 if EmailValidator throws", () => {
     const emailValidatorStub = makeEmailValidator();
+    const createAccountStub = makeCreateAccount();
     jest.spyOn(emailValidatorStub, "validate").mockImplementationOnce(() => {
       throw new Error();
     });
-    const sut = new SignUpController(emailValidatorStub);
+    const sut = new SignUpController(emailValidatorStub, createAccountStub);
     const request = {
       body: {
         name: "any_name",
@@ -121,5 +136,23 @@ describe("SignUp Controller", () => {
     const response = sut.handle(request);
     expect(response.statusCode).toBe(500);
     expect(response.body).toEqual(new ServerError());
+  });
+
+  test("should call CreateAccount with correct values", () => {
+    const { sut, createAccountStub } = makeSut();
+    const createAccountSpy = jest.spyOn(createAccountStub, "create");
+    const request = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+      },
+    };
+    sut.handle(request);
+    expect(createAccountSpy).toHaveBeenCalledWith({
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    });
   });
 });
