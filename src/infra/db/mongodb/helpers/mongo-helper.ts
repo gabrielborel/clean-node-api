@@ -16,4 +16,9 @@ export const MongoHelper = {
   getCollection(name: string): Collection {
     return this.client.db().collection(name);
   },
+
+  toDomain<T>(model: any): T {
+    const { _id, ...obj } = model;
+    return { id: _id.toString(), ...obj };
+  },
 };

@@ -11,11 +11,6 @@ export class MongoAccountRepository implements CreateAccountRepository {
       _id: result.insertedId,
     });
     if (!createdAccount) throw new Error("account not found");
-    return {
-      id: createdAccount._id.toString(),
-      name: createdAccount.name,
-      email: createdAccount.email,
-      password: createdAccount.password,
-    };
+    return MongoHelper.toDomain<AccountModel>(createdAccount);
   }
 }
