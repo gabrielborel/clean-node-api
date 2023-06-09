@@ -105,4 +105,20 @@ describe("DbCreateAccount UseCase", () => {
     const promise = sut.create(accountData);
     await expect(promise).rejects.toThrow();
   });
+
+  test("should return an account on succes", async () => {
+    const { sut } = makeSut();
+    const accountData = {
+      name: "valid_name",
+      email: "valid_email",
+      password: "valid_password",
+    };
+    const createdAccount = await sut.create(accountData);
+    expect(createdAccount).toEqual({
+      id: "valid_id",
+      name: "valid_name",
+      email: "valid_email",
+      password: "hashed_password",
+    });
+  });
 });
