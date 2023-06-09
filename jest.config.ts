@@ -8,4 +8,5 @@ export default {
     ".+\\.ts$": "ts-jest",
   },
   testMatch: ["**/*.test.ts", "**/*.spec.ts"],
+  preset: "@shelf/jest-mongodb",
 };
