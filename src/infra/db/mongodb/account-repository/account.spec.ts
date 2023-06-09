@@ -1,6 +1,10 @@
 import { MongoHelper } from "../helpers/mongo-helper";
 import { MongoAccountRepository } from "./account";
 
+const makeSut = (): MongoAccountRepository => {
+  return new MongoAccountRepository();
+};
+
 describe("MongoDB Account Repository", () => {
   beforeAll(async () => {
     if (process.env.MONGO_URL) {
@@ -14,7 +18,7 @@ describe("MongoDB Account Repository", () => {
   });
 
   test("should return an account on success", async () => {
-    const sut = new MongoAccountRepository();
+    const sut = makeSut();
     const accountData = {
       name: "any_name",
       email: "valid_email@mail.com",
