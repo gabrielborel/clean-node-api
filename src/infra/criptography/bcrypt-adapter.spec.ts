@@ -28,6 +28,7 @@ describe("Bcrypt Adapter", () => {
 
   test("should throw if bcrypt throws", async () => {
     const sut = makeSut();
+    // ! Idk why but was needed to cast the return value to void
     jest
       .spyOn(bcrypt, "hash")
       .mockReturnValueOnce(Promise.reject(new Error()) as unknown as void);
