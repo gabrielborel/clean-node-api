@@ -1,7 +1,6 @@
-import express from "express";
+import { app } from "./config/app";
 
-const app = express();
 const PORT = 3333;
-app.listen(PORT, () => {
-  console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
-});
+app.listen(PORT, () =>
+  console.info(`⚡️[server]: Server is running at https://localhost:${PORT}`)
+);
