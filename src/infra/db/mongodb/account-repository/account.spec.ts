@@ -8,7 +8,6 @@ const makeSut = (): MongoAccountRepository => {
 describe("MongoDB Account Repository", () => {
   beforeAll(async () => {
     if (process.env.MONGO_URL) {
-      console.log(process.env);
       await MongoHelper.connect(process.env.MONGO_URL);
     }
   });
