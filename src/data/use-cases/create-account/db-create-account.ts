@@ -18,7 +18,6 @@ export class DbCreateAccount implements CreateAccount {
       password: hashedPassword,
     });
     const createdAccount = await this.createAccountRepository.create(account);
-    console.log(createdAccount);
     return createdAccount;
   }
 }
