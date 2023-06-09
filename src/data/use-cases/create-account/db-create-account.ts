@@ -17,8 +17,8 @@ export class DbCreateAccount implements CreateAccount {
     const account = Object.assign({}, accountData, {
       password: hashedPassword,
     });
-
-    await this.createAccountRepository.create(account);
-    return new Promise((resolve) => resolve({} as AccountModel));
+    const createdAccount = await this.createAccountRepository.create(account);
+    console.log(createdAccount);
+    return createdAccount;
   }
 }
