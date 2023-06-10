@@ -1,6 +1,10 @@
 import { MongoHelper } from "../helpers/mongo-helper";
 import { MongoLogRepository } from "./log";
 
+const makeSut = (): MongoLogRepository => {
+  return new MongoLogRepository();
+};
+
 describe("MongoDB Log Repository", () => {
   beforeAll(async () => {
     if (process.env.MONGO_URL) {
@@ -18,7 +22,7 @@ describe("MongoDB Log Repository", () => {
   });
 
   test("should create an error log on success", async () => {
-    const sut = new MongoLogRepository();
+    const sut = makeSut();
     await sut.logError("any_error");
     const errorCollection = await MongoHelper.getCollection("errors");
     const count = await errorCollection.countDocuments();
