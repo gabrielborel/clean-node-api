@@ -5,6 +5,7 @@ import {
 } from "../../errors";
 import {
   badRequest,
+  ok,
   serverError,
   unauthorized,
 } from "../../helpers/http-helper";
@@ -130,5 +131,12 @@ describe("SignIn Controller", () => {
     const request = makeFakeRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(serverError(new ServerError("")));
+  });
+
+  test("should return 200 if valid credentials are provided", async () => {
+    const { sut } = makeSut();
+    const request = makeFakeRequest();
+    const response = await sut.handle(request);
+    expect(response).toEqual(ok({ accessToken: "access_token" }));
   });
 });
