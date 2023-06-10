@@ -10,7 +10,11 @@ const makeControllerStub = (): Controller => {
     async handle(request: HttpRequest): Promise<HttpResponse> {
       const httpResponse = {
         statusCode: 201,
-        body: {},
+        body: {
+          name: "any_name",
+          email: "valid_email@mail.com",
+          password: "any_password",
+        },
       };
       return new Promise((resolve) => resolve(httpResponse));
     }
@@ -42,5 +46,25 @@ describe("Log Decorator", () => {
     };
     await sut.handle(httpRequest);
     expect(handleSpy).toHaveBeenCalledWith(httpRequest);
+  });
+
+  test("should return the same result of the controller", async () => {
+    const { sut } = makeSut();
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "valid_email@mail.com",
+        password: "any_password",
+      },
+    };
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual({
+      statusCode: 201,
+      body: {
+        name: "any_name",
+        email: "valid_email@mail.com",
+        password: "any_password",
+      },
+    });
   });
 });
