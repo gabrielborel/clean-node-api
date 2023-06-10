@@ -1,9 +1,5 @@
 import { Authentication } from "../../../domain/use-cases/authentication";
-import {
-  InvalidParamError,
-  MissingParamError,
-  UnauthorizedError,
-} from "../../errors";
+import { InvalidParamError, MissingParamError } from "../../errors";
 import {
   badRequest,
   serverError,
