@@ -1,9 +1,20 @@
+import { LogErrorRepository } from "../../data/protocols/log-error-repository";
+import { serverError } from "../../presentations/helpers/http-helper";
 import {
   Controller,
   HttpRequest,
   HttpResponse,
 } from "../../presentations/protocols";
 import { LogControllerDecorator } from "./log";
+
+const makeLogErrorRepositoryStub = (): LogErrorRepository => {
+  class LogErrorRepositoryStub implements LogErrorRepository {
+    async log(stack: string): Promise<void> {
+      return new Promise((resolve) => resolve());
+    }
+  }
+  return new LogErrorRepositoryStub();
+};
 
 const makeControllerStub = (): Controller => {
   class ControllerStub implements Controller {
@@ -25,12 +36,17 @@ const makeControllerStub = (): Controller => {
 interface SutTypes {
   sut: LogControllerDecorator;
   controllerStub: Controller;
+  logErrorRepositoryStub: LogErrorRepository;
 }
 
 const makeSut = (): SutTypes => {
   const controllerStub = makeControllerStub();
-  const sut = new LogControllerDecorator(controllerStub);
-  return { sut, controllerStub };
+  const logErrorRepositoryStub = makeLogErrorRepositoryStub();
+  const sut = new LogControllerDecorator(
+    controllerStub,
+    logErrorRepositoryStub
+  );
+  return { sut, controllerStub, logErrorRepositoryStub };
 };
 
 describe("Log Decorator", () => {
@@ -66,5 +82,25 @@ describe("Log Decorator", () => {
         password: "any_password",
       },
     });
+  });
+
+  test("should call LogErrorRepository with correct stackTrace if controllers returns an server error", async () => {
+    const { sut, controllerStub, logErrorRepositoryStub } = makeSut();
+    const fakeError = new Error();
+    fakeError.stack = "any_stack";
+    const error = serverError(fakeError);
+    jest
+      .spyOn(controllerStub, "handle")
+      .mockReturnValueOnce(new Promise((resolve) => resolve(error)));
+    const logSpy = jest.spyOn(logErrorRepositoryStub, "log");
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+      },
+    };
+    await sut.handle(httpRequest);
+    expect(logSpy).toHaveBeenCalledWith("any_stack");
   });
 });
