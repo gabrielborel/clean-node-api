@@ -1,6 +1,13 @@
-import { app } from "./config/app";
+import { MongoHelper } from "../infra/db/mongodb/helpers/mongo-helper";
+import { environment } from "./config/env";
 
-const PORT = 3333;
-app.listen(PORT, () =>
-  console.info(`⚡️[server]: Server is running at https://localhost:${PORT}`)
-);
+MongoHelper.connect(environment.mongoUrl)
+  .then(async () => {
+    const { app } = await import("./config/app");
+    app.listen(environment.port, () =>
+      console.info(
+        `⚡️[server]: Server is running at https://localhost:${environment.port}`
+      )
+    );
+  })
+  .catch(console.error);
