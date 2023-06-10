@@ -1,6 +1,14 @@
 import { Authentication } from "../../../domain/use-cases/authentication";
-import { InvalidParamError, MissingParamError } from "../../errors";
-import { badRequest, serverError } from "../../helpers/http-helper";
+import {
+  InvalidParamError,
+  MissingParamError,
+  UnauthorizedError,
+} from "../../errors";
+import {
+  badRequest,
+  serverError,
+  unauthorized,
+} from "../../helpers/http-helper";
 import { Controller, HttpRequest, HttpResponse } from "../../protocols";
 import { EmailValidator } from "../signup/signup-protocols";
 
@@ -29,6 +37,10 @@ export class SignInController implements Controller {
         email,
         password,
       });
+      if (!accessToken) {
+        return unauthorized();
+      }
+
       return {
         statusCode: 200,
         body: {},
