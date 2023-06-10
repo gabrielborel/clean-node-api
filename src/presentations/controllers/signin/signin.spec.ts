@@ -6,8 +6,13 @@ import {
   InvalidParamError,
   MissingParamError,
   ServerError,
+  UnauthorizedError,
 } from "../../errors";
-import { badRequest, serverError } from "../../helpers/http-helper";
+import {
+  badRequest,
+  serverError,
+  unauthorized,
+} from "../../helpers/http-helper";
 import { HttpRequest } from "../../protocols";
 import { EmailValidator } from "../signup/signup-protocols";
 import { SignInController } from "./signin";
@@ -104,5 +109,15 @@ describe("SignIn Controller", () => {
     const httpRequest = makeFakeRequest();
     await sut.handle(httpRequest);
     expect(authenticationSpy).toHaveBeenCalledWith(httpRequest.body);
+  });
+
+  test("should return 401 if invalid credentials are provided", async () => {
+    const { sut, authenticationStub } = makeSut();
+    jest
+      .spyOn(authenticationStub, "auth")
+      .mockReturnValueOnce(new Promise((resolve, reject) => resolve("")));
+    const request = makeFakeRequest();
+    const response = await sut.handle(request);
+    expect(response).toEqual(unauthorized());
   });
 });
