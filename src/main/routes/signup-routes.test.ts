@@ -24,6 +24,10 @@ describe("SignUp Routes", () => {
       email: "any_email@mail.com",
       password: "Any Password",
     });
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("id");
+    expect(response.body.name).toBe("Any Name");
+    expect(response.body.email).toBe("any_email@mail.com");
+    expect(response.body.password).toBeTruthy();
   });
 });
