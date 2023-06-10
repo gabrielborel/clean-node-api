@@ -1,3 +1,7 @@
+import {
+  Authentication,
+  AuthenticationModel,
+} from "../../../domain/use-cases/authentication";
 import { EmailValidatorAdapter } from "../../../utils/email-validator-adapter";
 import {
   InvalidParamError,
@@ -25,17 +29,29 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub();
 };
 
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    async auth(data: AuthenticationModel): Promise<string> {
+      return new Promise((resolve, reject) => resolve("access_token"));
+    }
+  }
+  return new AuthenticationStub();
+};
+
 interface SutType {
   sut: SignInController;
   emailValidatorStub: EmailValidator;
+  authenticationStub: Authentication;
 }
 
 const makeSut = (): SutType => {
   const emailValidator = makeEmailValidator();
-  const signinController = new SignInController(emailValidator);
+  const authentication = makeAuthentication();
+  const signinController = new SignInController(emailValidator, authentication);
   return {
     sut: signinController,
     emailValidatorStub: emailValidator,
+    authenticationStub: authentication,
   };
 };
 
@@ -81,5 +97,13 @@ describe("SignIn Controller", () => {
     const request = makeFakeRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(serverError(new ServerError("")));
+  });
+
+  test("should call Authentication with correct values", async () => {
+    const { sut, authenticationStub } = makeSut();
+    const authenticationSpy = jest.spyOn(authenticationStub, "auth");
+    const httpRequest = makeFakeRequest();
+    await sut.handle(httpRequest);
+    expect(authenticationSpy).toHaveBeenCalledWith(httpRequest.body);
   });
 });
