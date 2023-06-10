@@ -1,6 +1,8 @@
+import { EmailValidatorAdapter } from "../../../utils/email-validator-adapter";
 import { MissingParamError } from "../../errors";
 import { badRequest } from "../../helpers/http-helper";
 import { HttpRequest } from "../../protocols";
+import { EmailValidator } from "../signup/signup-protocols";
 import { SignInController } from "./signin";
 
 const makeRequest = (): HttpRequest => ({
@@ -10,18 +12,30 @@ const makeRequest = (): HttpRequest => ({
   },
 });
 
+const makeEmailValidator = (): EmailValidator => {
+  class EmailValidatorStub implements EmailValidator {
+    validate(email: string): boolean {
+      return true;
+    }
+  }
+  return new EmailValidatorStub();
+};
+
 interface SutType {
   sut: SignInController;
+  emailValidatorStub: EmailValidator;
 }
 
 const makeSut = (): SutType => {
-  const signinController = new SignInController();
+  const emailValidator = makeEmailValidator();
+  const signinController = new SignInController(emailValidator);
   return {
     sut: signinController,
+    emailValidatorStub: emailValidator,
   };
 };
 
-describe("Signin Controller", () => {
+describe("SignIn Controller", () => {
   test("should return 400 if no email is provided", async () => {
     const { sut } = makeSut();
     const httpRequest = makeRequest();
@@ -36,5 +50,13 @@ describe("Signin Controller", () => {
     delete httpRequest.body.password;
     const response = await sut.handle(httpRequest);
     expect(response).toEqual(badRequest(new MissingParamError("password")));
+  });
+
+  test("should call EmailValidator with correct email", async () => {
+    const { sut, emailValidatorStub } = makeSut();
+    const emailValidatorSpy = jest.spyOn(emailValidatorStub, "validate");
+    const httpRequest = makeRequest();
+    await sut.handle(httpRequest);
+    expect(emailValidatorSpy).toHaveBeenCalledWith(httpRequest.body.email);
   });
 });
