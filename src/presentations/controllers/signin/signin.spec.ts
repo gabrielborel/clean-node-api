@@ -2,7 +2,6 @@ import {
   Authentication,
   AuthenticationModel,
 } from "../../../domain/use-cases/authentication";
-import { EmailValidatorAdapter } from "../../../utils/email-validator-adapter";
 import {
   InvalidParamError,
   MissingParamError,
