@@ -1,3 +1,4 @@
+import { test, describe, vi, expect } from "vitest";
 import { DbCreateAccount } from "./db-create-account";
 import {
   AccountModel,
@@ -54,7 +55,7 @@ const makeSut = (): SutType => {
 describe("DbCreateAccount UseCase", () => {
   test("should call Encrypter with correct password", async () => {
     const { sut, encrypterStub } = makeSut();
-    const encrypterSpy = jest.spyOn(encrypterStub, "encrypt");
+    const encrypterSpy = vi.spyOn(encrypterStub, "encrypt");
     const accountData = makeFakeAccountData();
     await sut.create(accountData);
     expect(encrypterSpy).toHaveBeenCalledWith("valid_password");
@@ -62,11 +63,9 @@ describe("DbCreateAccount UseCase", () => {
 
   test("should throw if Encrypter throws", async () => {
     const { sut, encrypterStub } = makeSut();
-    jest
-      .spyOn(encrypterStub, "encrypt")
-      .mockReturnValueOnce(
-        new Promise((resolve, reject) => reject(new Error()))
-      );
+    vi.spyOn(encrypterStub, "encrypt").mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error()))
+    );
 
     const accountData = makeFakeAccountData();
     const promise = sut.create(accountData);
@@ -75,7 +74,7 @@ describe("DbCreateAccount UseCase", () => {
 
   test("should call CreateAccountRepository with correct data", async () => {
     const { sut, createAccountRepositoryStub } = makeSut();
-    const createSpy = jest.spyOn(createAccountRepositoryStub, "create");
+    const createSpy = vi.spyOn(createAccountRepositoryStub, "create");
     const accountData = makeFakeAccountData();
     await sut.create(accountData);
     expect(createSpy).toHaveBeenCalledWith({
@@ -87,11 +86,9 @@ describe("DbCreateAccount UseCase", () => {
 
   test("should throw if CreateAccountRepository throws", async () => {
     const { sut, createAccountRepositoryStub } = makeSut();
-    jest
-      .spyOn(createAccountRepositoryStub, "create")
-      .mockReturnValueOnce(
-        new Promise((resolve, reject) => reject(new Error()))
-      );
+    vi.spyOn(createAccountRepositoryStub, "create").mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error()))
+    );
 
     const accountData = makeFakeAccountData();
     const promise = sut.create(accountData);

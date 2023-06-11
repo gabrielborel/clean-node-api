@@ -1,8 +1,11 @@
 import { MongoHelper as sut } from "./mongo-helper";
+import { test, describe, expect, beforeAll, afterAll } from "vitest";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 describe("Mongo Helper", () => {
   beforeAll(async () => {
-    await sut.connect(process.env.MONGO_URL as string);
+    const mongo = await MongoMemoryServer.create();
+    await sut.connect(mongo.getUri());
   });
 
   afterAll(async () => {

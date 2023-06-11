@@ -1,6 +1,7 @@
 import { MissingParamError } from "../../errors";
 import { Validation } from "../../protocols/validation";
 import { ValidationComposite } from "./validation-composite";
+import { test, describe, vi, expect } from "vitest";
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
@@ -28,9 +29,9 @@ const makeSut = (): SutType => {
 describe("Validation Composite", () => {
   test("should return an error if any validation fails", async () => {
     const { sut, validationStubs } = makeSut();
-    jest
-      .spyOn(validationStubs[0], "validate")
-      .mockReturnValueOnce(new MissingParamError("email"));
+    vi.spyOn(validationStubs[0], "validate").mockReturnValueOnce(
+      new MissingParamError("email")
+    );
     const error = sut.validate({
       email: "any_email@mail.com",
     });
@@ -39,10 +40,10 @@ describe("Validation Composite", () => {
 
   test("should return the first error if more than one validation fails", async () => {
     const { sut, validationStubs } = makeSut();
-    jest.spyOn(validationStubs[0], "validate").mockReturnValueOnce(new Error());
-    jest
-      .spyOn(validationStubs[1], "validate")
-      .mockReturnValueOnce(new MissingParamError("email"));
+    vi.spyOn(validationStubs[0], "validate").mockReturnValueOnce(new Error());
+    vi.spyOn(validationStubs[1], "validate").mockReturnValueOnce(
+      new MissingParamError("email")
+    );
     const error = sut.validate({
       email: "any_email@mail.com",
     });

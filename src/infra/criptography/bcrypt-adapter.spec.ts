@@ -1,9 +1,12 @@
 import bcrypt from "bcrypt";
 import { BcryptAdapter } from "./bcrypt-adapter";
+import { test, describe, vi, expect } from "vitest";
 
-jest.mock("bcrypt", () => ({
-  async hash(): Promise<string> {
-    return new Promise((resolve) => resolve("hash"));
+vi.mock("bcrypt", () => ({
+  default: {
+    async hash(): Promise<string> {
+      return "hash";
+    },
   },
 }));
 
@@ -14,7 +17,7 @@ const makeSut = (): BcryptAdapter => {
 
 describe("Bcrypt Adapter", () => {
   test("should call bcrypt with correct values", async () => {
-    const hashSpy = jest.spyOn(bcrypt, "hash");
+    const hashSpy = vi.spyOn(bcrypt, "hash");
     const sut = makeSut();
     await sut.encrypt("any_value");
     expect(hashSpy).toHaveBeenCalledWith("any_value", SALT);
@@ -29,9 +32,9 @@ describe("Bcrypt Adapter", () => {
   test("should throw if bcrypt throws", async () => {
     const sut = makeSut();
     // ! Idk why but was needed to cast the return value to void
-    jest
-      .spyOn(bcrypt, "hash")
-      .mockReturnValueOnce(Promise.reject(new Error()) as unknown as void);
+    vi.spyOn(bcrypt, "hash").mockReturnValueOnce(
+      Promise.reject(new Error()) as unknown as void
+    );
     const promise = sut.encrypt("any_value");
     await expect(promise).rejects.toThrow();
   });

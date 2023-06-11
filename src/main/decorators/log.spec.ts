@@ -10,6 +10,7 @@ import {
   HttpResponse,
 } from "../../presentations/protocols";
 import { LogControllerDecorator } from "./log";
+import { test, describe, vi, expect } from "vitest";
 
 const makeLogErrorRepositoryStub = (): LogErrorRepository => {
   class LogErrorRepositoryStub implements LogErrorRepository {
@@ -64,7 +65,7 @@ const makeSut = (): SutTypes => {
 describe("Log Decorator", () => {
   test("should call controller handle", async () => {
     const { controllerStub, sut } = makeSut();
-    const handleSpy = jest.spyOn(controllerStub, "handle");
+    const handleSpy = vi.spyOn(controllerStub, "handle");
     const httpRequest = makeFakeRequest();
     await sut.handle(httpRequest);
     expect(handleSpy).toHaveBeenCalledWith(httpRequest);
@@ -82,10 +83,10 @@ describe("Log Decorator", () => {
     const fakeError = new Error();
     fakeError.stack = "any_stack";
     const error = serverError(fakeError);
-    jest
-      .spyOn(controllerStub, "handle")
-      .mockReturnValueOnce(new Promise((resolve) => resolve(error)));
-    const logSpy = jest.spyOn(logErrorRepositoryStub, "logError");
+    vi.spyOn(controllerStub, "handle").mockReturnValueOnce(
+      new Promise((resolve) => resolve(error))
+    );
+    const logSpy = vi.spyOn(logErrorRepositoryStub, "logError");
     const httpRequest = makeFakeRequest();
     await sut.handle(httpRequest);
     expect(logSpy).toHaveBeenCalledWith("any_stack");

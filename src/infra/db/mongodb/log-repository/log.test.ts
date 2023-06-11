@@ -1,5 +1,14 @@
 import { MongoHelper } from "../helpers/mongo-helper";
 import { MongoLogRepository } from "./log";
+import {
+  test,
+  describe,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from "vitest";
+import { MongoMemoryServer } from "mongodb-memory-server";
 
 const makeSut = (): MongoLogRepository => {
   return new MongoLogRepository();
@@ -7,9 +16,8 @@ const makeSut = (): MongoLogRepository => {
 
 describe("MongoDB Log Repository", () => {
   beforeAll(async () => {
-    if (process.env.MONGO_URL) {
-      await MongoHelper.connect(process.env.MONGO_URL);
-    }
+    const mongo = await MongoMemoryServer.create();
+    await MongoHelper.connect(mongo.getUri());
   });
 
   afterAll(async () => {

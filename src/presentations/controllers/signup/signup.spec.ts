@@ -12,6 +12,7 @@ import {
   HttpRequest,
   Validation,
 } from "./signup-protocols";
+import { test, describe, vi, expect } from "vitest";
 
 const makeCreateAccount = (): CreateAccount => {
   class CreateAccountStub implements CreateAccount {
@@ -67,7 +68,7 @@ const makeSut = (): SutType => {
 describe("SignUp Controller", () => {
   test("should call CreateAccount with correct values", async () => {
     const { sut, createAccountStub } = makeSut();
-    const createAccountSpy = jest.spyOn(createAccountStub, "create");
+    const createAccountSpy = vi.spyOn(createAccountStub, "create");
     const request = makeFakeRequest();
     await sut.handle(request);
     expect(createAccountSpy).toHaveBeenCalledWith({
@@ -79,8 +80,10 @@ describe("SignUp Controller", () => {
 
   test("should return 500 if CreateAccount throws", async () => {
     const { sut, createAccountStub } = makeSut();
-    jest.spyOn(createAccountStub, "create").mockImplementationOnce(() => {
-      return new Promise((resolve, reject) => reject(new Error()));
+    vi.spyOn(createAccountStub, "create").mockImplementationOnce(() => {
+      return new Promise<AccountModel>((resolve, reject) =>
+        reject(new Error())
+      );
     });
     const request = makeFakeRequest();
     const response = await sut.handle(request);
@@ -96,7 +99,7 @@ describe("SignUp Controller", () => {
 
   test("should call Validation with correct values", async () => {
     const { sut, validationStub } = makeSut();
-    const validationSpy = jest.spyOn(validationStub, "validate");
+    const validationSpy = vi.spyOn(validationStub, "validate");
     const request = makeFakeRequest();
     await sut.handle(request);
     expect(validationSpy).toHaveBeenCalledWith(request.body);
@@ -104,7 +107,7 @@ describe("SignUp Controller", () => {
 
   test("should return 400 if validation returns an error", async () => {
     const { sut, validationStub } = makeSut();
-    const validationSpy = jest.spyOn(validationStub, "validate");
+    const validationSpy = vi.spyOn(validationStub, "validate");
     validationSpy.mockReturnValueOnce(new InvalidParamError("any_field"));
     const request = makeFakeRequest();
     const response = await sut.handle(request);

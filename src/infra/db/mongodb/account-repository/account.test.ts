@@ -1,3 +1,12 @@
+import {
+  test,
+  describe,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from "vitest";
+import { MongoMemoryServer } from "mongodb-memory-server";
 import { MongoHelper } from "../helpers/mongo-helper";
 import { MongoAccountRepository } from "./account";
 
@@ -5,11 +14,11 @@ const makeSut = (): MongoAccountRepository => {
   return new MongoAccountRepository();
 };
 
-describe("MongoDB Account Repository", () => {
+describe.only("MongoDB Account Repository", () => {
   beforeAll(async () => {
-    if (process.env.MONGO_URL) {
-      await MongoHelper.connect(process.env.MONGO_URL);
-    }
+    const mongo = await MongoMemoryServer.create();
+    const uri = mongo.getUri();
+    await MongoHelper.connect(uri);
   });
 
   afterAll(async () => {

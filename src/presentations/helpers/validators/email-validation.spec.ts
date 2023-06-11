@@ -1,6 +1,7 @@
 import { EmailValidator } from "../../controllers/signup/signup-protocols";
 import { InvalidParamError } from "../../errors";
 import { EmailValidation } from "./email-validation";
+import { test, describe, vi, expect } from "vitest";
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -28,7 +29,7 @@ const makeSut = (): SutType => {
 describe("Email Validation", () => {
   test("should return an error if EmailValidator returns false", async () => {
     const { sut, emailValidatorStub } = makeSut();
-    jest.spyOn(emailValidatorStub, "validate").mockReturnValueOnce(false);
+    vi.spyOn(emailValidatorStub, "validate").mockReturnValueOnce(false);
     const error = sut.validate({
       email: "any_email@mail.com",
     });
@@ -37,7 +38,7 @@ describe("Email Validation", () => {
 
   test("should call EmailValidator with correct email", async () => {
     const { sut, emailValidatorStub } = makeSut();
-    const isValidSpy = jest.spyOn(emailValidatorStub, "validate");
+    const isValidSpy = vi.spyOn(emailValidatorStub, "validate");
     sut.validate({
       email: "any_email@mail.com",
     });
@@ -54,7 +55,7 @@ describe("Email Validation", () => {
 
   test("should return throw if EmailValidator throws", async () => {
     const { sut, emailValidatorStub } = makeSut();
-    jest.spyOn(emailValidatorStub, "validate").mockImplementationOnce(() => {
+    vi.spyOn(emailValidatorStub, "validate").mockImplementationOnce(() => {
       throw new Error();
     });
     expect(sut.validate).toThrow();

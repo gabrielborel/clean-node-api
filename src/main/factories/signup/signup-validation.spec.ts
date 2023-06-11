@@ -5,8 +5,9 @@ import {
 } from "../../../presentations/helpers/validators";
 import { EmailValidator } from "../../../presentations/protocols/email-validator";
 import { makeSignUpValidation } from "./signup-validation";
+import { test, describe, vi, expect } from "vitest";
 
-jest.mock("../../../presentations/helpers/validators/validation-composite");
+vi.mock("../../../presentations/helpers/validators/validation-composite");
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {

@@ -1,3 +1,4 @@
+import { test, describe, vi, expect } from "vitest";
 import { InvalidParamError, ServerError } from "../../errors";
 import {
   badRequest,
@@ -58,7 +59,7 @@ const makeSut = (): SutType => {
 describe("SignIn Controller", () => {
   test("should call Authentication with correct values", async () => {
     const { sut, authenticationStub } = makeSut();
-    const authenticationSpy = jest.spyOn(authenticationStub, "auth");
+    const authenticationSpy = vi.spyOn(authenticationStub, "auth");
     const httpRequest = makeFakeRequest();
     await sut.handle(httpRequest);
     expect(authenticationSpy).toHaveBeenCalledWith(httpRequest.body);
@@ -66,9 +67,9 @@ describe("SignIn Controller", () => {
 
   test("should return 401 if invalid credentials are provided", async () => {
     const { sut, authenticationStub } = makeSut();
-    jest
-      .spyOn(authenticationStub, "auth")
-      .mockReturnValueOnce(new Promise((resolve, reject) => resolve("")));
+    vi.spyOn(authenticationStub, "auth").mockReturnValueOnce(
+      new Promise((resolve, reject) => resolve(""))
+    );
     const request = makeFakeRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(unauthorized());
@@ -76,11 +77,9 @@ describe("SignIn Controller", () => {
 
   test("should return 500 if Authentication throws", async () => {
     const { sut, authenticationStub } = makeSut();
-    jest
-      .spyOn(authenticationStub, "auth")
-      .mockReturnValueOnce(
-        new Promise((resolve, reject) => reject(new Error()))
-      );
+    vi.spyOn(authenticationStub, "auth").mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error()))
+    );
     const request = makeFakeRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(serverError(new ServerError("")));
@@ -95,7 +94,7 @@ describe("SignIn Controller", () => {
 
   test("should call Validation with correct values", async () => {
     const { sut, validationStub } = makeSut();
-    const validationSpy = jest.spyOn(validationStub, "validate");
+    const validationSpy = vi.spyOn(validationStub, "validate");
     const request = makeFakeRequest();
     await sut.handle(request);
     expect(validationSpy).toHaveBeenCalledWith(request.body);
@@ -103,7 +102,7 @@ describe("SignIn Controller", () => {
 
   test("should return 400 if validation returns an error", async () => {
     const { sut, validationStub } = makeSut();
-    const validationSpy = jest.spyOn(validationStub, "validate");
+    const validationSpy = vi.spyOn(validationStub, "validate");
     validationSpy.mockReturnValueOnce(new InvalidParamError("any_field"));
     const request = makeFakeRequest();
     const response = await sut.handle(request);

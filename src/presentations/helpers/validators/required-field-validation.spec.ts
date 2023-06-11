@@ -1,5 +1,6 @@
 import { MissingParamError } from "../../errors";
 import { RequiredFieldValidation } from "./required-field-validation";
+import { test, describe, expect } from "vitest";
 
 const makeSut = (field: string): RequiredFieldValidation => {
   return new RequiredFieldValidation(field);
