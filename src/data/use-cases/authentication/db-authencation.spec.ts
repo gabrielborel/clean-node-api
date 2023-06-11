@@ -20,7 +20,7 @@ const makeFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
   class FindAccountByEmailRepositoryStub
     implements FindAccountByEmailRepository
   {
-    async find(email: string): Promise<AccountModel> {
+    async find(email: string): Promise<AccountModel | null> {
       return new Promise((resolve) => resolve(makeFakeAccount()));
     }
   }
@@ -56,5 +56,14 @@ describe("DbAuthentication UseCase", () => {
     );
     const promise = sut.auth(makeFakeAuthentication());
     await expect(promise).rejects.toThrow();
+  });
+
+  test("should return null if FindAccountByEmailRepository returns null", async () => {
+    const { sut, findAccountByEmailRepositoryStub } = makeSut();
+    vi.spyOn(findAccountByEmailRepositoryStub, "find").mockResolvedValueOnce(
+      null
+    );
+    const accessToken = await sut.auth(makeFakeAuthentication());
+    expect(accessToken).toBeNull();
   });
 });

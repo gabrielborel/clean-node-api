@@ -9,8 +9,8 @@ export class DbAuthentication implements Authentication {
     private readonly findAccountByEmailRepository: FindAccountByEmailRepository
   ) {}
 
-  async auth(data: AuthenticationModel): Promise<string> {
+  async auth(data: AuthenticationModel): Promise<string | null> {
     await this.findAccountByEmailRepository.find(data.email);
-    return "access_token";
+    return null;
   }
 }
