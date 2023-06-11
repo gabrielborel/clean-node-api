@@ -1,11 +1,13 @@
 import { describe, test, vi, expect } from "vitest";
-import { AccountModel } from "../create-account/db-create-account-protocols";
-import { FindAccountByEmailRepository } from "../../protocols/db/find-account-by-email-repository";
 import { DbAuthentication } from "./db-authentication";
-import { AuthenticationModel } from "../../../domain/use-cases/authentication";
-import { HashComparer } from "../../protocols/criptography/hash-comparer";
-import { TokenGenerator } from "../../protocols/criptography/token-generator";
-import { UpdateAccessTokenRepository } from "../../protocols/db/update-access-token-repository";
+import {
+  HashComparer,
+  UpdateAccessTokenRepository,
+  TokenGenerator,
+  AuthenticationModel,
+  FindAccountByEmailRepository,
+  AccountModel,
+} from "./db-authentication-protocols";
 
 const makeFakeAccount = (): AccountModel => ({
   id: "valid_id",

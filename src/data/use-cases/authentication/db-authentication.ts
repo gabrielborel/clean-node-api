@@ -1,11 +1,11 @@
 import {
   Authentication,
+  FindAccountByEmailRepository,
+  HashComparer,
+  TokenGenerator,
+  UpdateAccessTokenRepository,
   AuthenticationModel,
-} from "../../../domain/use-cases/authentication";
-import { HashComparer } from "../../protocols/criptography/hash-comparer";
-import { TokenGenerator } from "../../protocols/criptography/token-generator";
-import { FindAccountByEmailRepository } from "../../protocols/db/find-account-by-email-repository";
-import { UpdateAccessTokenRepository } from "../../protocols/db/update-access-token-repository";
+} from "./db-authentication-protocols";
 
 export class DbAuthentication implements Authentication {
   constructor(
