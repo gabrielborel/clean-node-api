@@ -9,4 +9,12 @@ describe("RequiredField Validation", () => {
     });
     expect(error).toEqual(new MissingParamError("email"));
   });
+
+  test("should return nothing if validation succeeds", async () => {
+    const sut = new RequiredFieldValidation("email");
+    const error = sut.validate({
+      email: "any_email@mail.com",
+    });
+    expect(error).toBeNull();
+  });
 });
