@@ -80,7 +80,7 @@ describe("DbAuthentication UseCase", () => {
     expect(accessToken).toBeNull();
   });
 
-  test("should call HashCompare with correct values", async () => {
+  test("should call HashComparer with correct values", async () => {
     const { sut, hashComparerStub } = makeSut();
     const authData = makeFakeAuthentication();
     const compareSpy = vi.spyOn(hashComparerStub, "compare");
@@ -88,10 +88,17 @@ describe("DbAuthentication UseCase", () => {
     expect(compareSpy).toHaveBeenCalledWith("any_password", "hashed_password");
   });
 
-  test("should throw if HashCompare throws", async () => {
+  test("should throw if HashComparer throws", async () => {
     const { sut, hashComparerStub } = makeSut();
     vi.spyOn(hashComparerStub, "compare").mockRejectedValueOnce(new Error());
     const promise = sut.auth(makeFakeAuthentication());
     await expect(promise).rejects.toThrow();
+  });
+
+  test("should return null if HashComparer returns false", async () => {
+    const { sut, hashComparerStub } = makeSut();
+    vi.spyOn(hashComparerStub, "compare").mockResolvedValueOnce(false);
+    const accessToken = await sut.auth(makeFakeAuthentication());
+    expect(accessToken).toBeNull();
   });
 });
