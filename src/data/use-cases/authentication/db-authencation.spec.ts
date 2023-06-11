@@ -125,4 +125,11 @@ describe("DbAuthentication UseCase", () => {
     await sut.auth(makeFakeAuthentication());
     expect(generateSpy).toHaveBeenCalledWith("valid_id");
   });
+
+  test("should throw if TokenGenerator throws", async () => {
+    const { sut, tokenGeneratorStub } = makeSut();
+    vi.spyOn(tokenGeneratorStub, "generate").mockRejectedValueOnce(new Error());
+    const promise = sut.auth(makeFakeAuthentication());
+    await expect(promise).rejects.toThrow();
+  });
 });
