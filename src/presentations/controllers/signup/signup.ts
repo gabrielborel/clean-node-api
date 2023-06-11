@@ -1,11 +1,11 @@
-import { InvalidParamError, MissingParamError } from "../../errors";
+import { InvalidParamError } from "../../errors";
 import { badRequest, created, serverError } from "../../helpers/http-helper";
 import {
   Controller,
+  CreateAccount,
+  EmailValidator,
   HttpRequest,
   HttpResponse,
-  EmailValidator,
-  CreateAccount,
   Validation,
 } from "./signup-protocols";
 

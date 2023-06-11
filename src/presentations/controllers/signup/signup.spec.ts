@@ -1,18 +1,14 @@
+import { MissingParamError, ServerError } from "../../errors";
+import { badRequest, created, serverError } from "../../helpers/http-helper";
+import { SignUpController } from "./signup";
 import {
-  InvalidParamError,
-  MissingParamError,
-  ServerError,
-} from "../../errors";
-import {
-  EmailValidator,
   AccountModel,
-  CreateAccountModel,
   CreateAccount,
+  CreateAccountModel,
+  EmailValidator,
   HttpRequest,
   Validation,
 } from "./signup-protocols";
-import { SignUpController } from "./signup";
-import { badRequest, created, serverError } from "../../helpers/http-helper";
 
 const makeCreateAccount = (): CreateAccount => {
   class CreateAccountStub implements CreateAccount {
