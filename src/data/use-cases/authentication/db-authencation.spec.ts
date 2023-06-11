@@ -159,4 +159,13 @@ describe("DbAuthentication UseCase", () => {
     await sut.auth(makeFakeAuthentication());
     expect(updateSpy).toHaveBeenCalledWith("valid_id", "access_token");
   });
+
+  test("should throw if UpdateAccessTokenRepository throws", async () => {
+    const { sut, updateAccessTokenRepositoryStub } = makeSut();
+    vi.spyOn(updateAccessTokenRepositoryStub, "update").mockRejectedValueOnce(
+      new Error()
+    );
+    const promise = sut.auth(makeFakeAuthentication());
+    await expect(promise).rejects.toThrow();
+  });
 });
