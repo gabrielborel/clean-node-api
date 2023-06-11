@@ -44,6 +44,14 @@ describe("Email Validation", () => {
     expect(isValidSpy).toHaveBeenCalledWith("any_email@mail.com");
   });
 
+  test("should return nothing if validation succeeds", async () => {
+    const { sut } = makeSut();
+    const error = sut.validate({
+      email: "any_email@mail.com",
+    });
+    expect(error).toBeNull();
+  });
+
   test("should return throw if EmailValidator throws", async () => {
     const { sut, emailValidatorStub } = makeSut();
     jest.spyOn(emailValidatorStub, "validate").mockImplementationOnce(() => {
