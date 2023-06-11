@@ -48,4 +48,12 @@ describe("Validation Composite", () => {
     });
     expect(error).toEqual(new Error());
   });
+
+  test("should return nothing if validation succeeds", async () => {
+    const { sut } = makeSut();
+    const error = sut.validate({
+      email: "any_email@mail.com",
+    });
+    expect(error).toBeNull();
+  });
 });
