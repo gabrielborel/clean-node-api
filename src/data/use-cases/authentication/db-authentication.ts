@@ -2,7 +2,7 @@ import {
   Authentication,
   AuthenticationModel,
 } from "../../../domain/use-cases/authentication";
-import { FindAccountByEmailRepository } from "../../protocols/find-account-by-email-repository";
+import { FindAccountByEmailRepository } from "../../protocols/db/find-account-by-email-repository";
 
 export class DbAuthentication implements Authentication {
   constructor(

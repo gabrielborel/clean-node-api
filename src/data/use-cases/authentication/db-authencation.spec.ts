@@ -1,6 +1,6 @@
 import { describe, test, vi, expect } from "vitest";
 import { AccountModel } from "../create-account/db-create-account-protocols";
-import { FindAccountByEmailRepository } from "../../protocols/find-account-by-email-repository";
+import { FindAccountByEmailRepository } from "../../protocols/db/find-account-by-email-repository";
 import { DbAuthentication } from "./db-authentication";
 import { AuthenticationModel } from "../../../domain/use-cases/authentication";
 
