@@ -48,4 +48,13 @@ describe("DbAuthentication UseCase", () => {
     await sut.auth(makeFakeAuthentication());
     expect(findSpy).toHaveBeenCalledWith("any_email@mail.com");
   });
+
+  test("should throw if FindAccountByEmailRepository throws", async () => {
+    const { sut, findAccountByEmailRepositoryStub } = makeSut();
+    vi.spyOn(findAccountByEmailRepositoryStub, "find").mockRejectedValueOnce(
+      new Error()
+    );
+    const promise = sut.auth(makeFakeAuthentication());
+    await expect(promise).rejects.toThrow();
+  });
 });
