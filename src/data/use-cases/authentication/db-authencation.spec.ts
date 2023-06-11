@@ -4,6 +4,7 @@ import { FindAccountByEmailRepository } from "../../protocols/db/find-account-by
 import { DbAuthentication } from "./db-authentication";
 import { AuthenticationModel } from "../../../domain/use-cases/authentication";
 import { HashComparer } from "../../protocols/criptography/hash-comparer";
+import { TokenGenerator } from "../../protocols/criptography/token-generator";
 
 const makeFakeAccount = (): AccountModel => ({
   id: "valid_id",
@@ -26,6 +27,15 @@ const makeHashComparer = (): HashComparer => {
   return new HashComparerStub();
 };
 
+const makeTokenGenerator = (): TokenGenerator => {
+  class TokenGeneratorStub implements TokenGenerator {
+    async generate(id: string): Promise<string> {
+      return "access_token";
+    }
+  }
+  return new TokenGeneratorStub();
+};
+
 const makeFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
   class FindAccountByEmailRepositoryStub
     implements FindAccountByEmailRepository
@@ -41,16 +51,23 @@ interface SutType {
   sut: DbAuthentication;
   findAccountByEmailRepositoryStub: FindAccountByEmailRepository;
   hashComparerStub: HashComparer;
+  tokenGeneratorStub: TokenGenerator;
 }
 
 const makeSut = (): SutType => {
   const hashComparer = makeHashComparer();
   const findAccountByEmailRepository = makeFindAccountByEmailRepository();
-  const sut = new DbAuthentication(findAccountByEmailRepository, hashComparer);
+  const tokenGenerator = makeTokenGenerator();
+  const sut = new DbAuthentication(
+    findAccountByEmailRepository,
+    hashComparer,
+    tokenGenerator
+  );
   return {
     sut,
     findAccountByEmailRepositoryStub: findAccountByEmailRepository,
     hashComparerStub: hashComparer,
+    tokenGeneratorStub: tokenGenerator,
   };
 };
 
@@ -100,5 +117,12 @@ describe("DbAuthentication UseCase", () => {
     vi.spyOn(hashComparerStub, "compare").mockResolvedValueOnce(false);
     const accessToken = await sut.auth(makeFakeAuthentication());
     expect(accessToken).toBeNull();
+  });
+
+  test("should call TokenGenerator with correct id", async () => {
+    const { sut, tokenGeneratorStub } = makeSut();
+    const generateSpy = vi.spyOn(tokenGeneratorStub, "generate");
+    await sut.auth(makeFakeAuthentication());
+    expect(generateSpy).toHaveBeenCalledWith("valid_id");
   });
 });
