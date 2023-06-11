@@ -82,39 +82,6 @@ const makeSut = (): SutType => {
 };
 
 describe("SignUp Controller", () => {
-  test("should return 400 if no name is provided", async () => {
-    const { sut } = makeSut();
-    const request = makeFakeRequest();
-    delete request.body.name;
-    const response = await sut.handle(request);
-    expect(response).toEqual(badRequest(new MissingParamError("name")));
-  });
-
-  test("should return 400 if no email is provided", async () => {
-    const { sut } = makeSut();
-    const request = makeFakeRequest();
-    delete request.body.email;
-    const response = await sut.handle(request);
-    expect(response).toEqual(badRequest(new MissingParamError("email")));
-  });
-
-  test("should return 400 if no password is provided", async () => {
-    const { sut } = makeSut();
-    const request = makeFakeRequest();
-    delete request.body.password;
-    const response = await sut.handle(request);
-    expect(response).toEqual(badRequest(new MissingParamError("password")));
-  });
-
-  test("should return 400 if a invalid email is provided", async () => {
-    const { sut, emailValidatorStub } = makeSut();
-    jest.spyOn(emailValidatorStub, "validate").mockReturnValueOnce(false);
-    const request = makeFakeRequest();
-    const response = await sut.handle(request);
-    expect(response.statusCode).toBe(400);
-    expect(response.body).toEqual(new InvalidParamError("email"));
-  });
-
   test("should call EmailValidator with correct email", async () => {
     const { sut, emailValidatorStub } = makeSut();
     const isValidSpy = jest.spyOn(emailValidatorStub, "validate");

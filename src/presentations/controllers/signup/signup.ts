@@ -23,13 +23,6 @@ export class SignUpController implements Controller {
         return badRequest(error);
       }
 
-      const requiredFields = ["name", "email", "password"];
-      for (const field of requiredFields) {
-        if (!request.body[field]) {
-          return badRequest(new MissingParamError(field));
-        }
-      }
-
       const { email, password, name } = request.body;
       const isValid = this.emailValidator.validate(email);
       if (!isValid) {
