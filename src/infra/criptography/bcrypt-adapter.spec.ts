@@ -31,10 +31,7 @@ describe("Bcrypt Adapter", () => {
 
   test("should throw if bcrypt throws", async () => {
     const sut = makeSut();
-    // ! Idk why but was needed to cast the return value to void
-    vi.spyOn(bcrypt, "hash").mockReturnValueOnce(
-      Promise.reject(new Error()) as unknown as void
-    );
+    vi.spyOn(bcrypt, "hash").mockRejectedValueOnce(new Error());
     const promise = sut.encrypt("any_value");
     await expect(promise).rejects.toThrow();
   });
