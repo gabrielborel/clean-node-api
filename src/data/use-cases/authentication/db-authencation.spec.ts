@@ -52,7 +52,7 @@ const makeFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
   class FindAccountByEmailRepositoryStub
     implements FindAccountByEmailRepository
   {
-    async find(email: string): Promise<AccountModel | null> {
+    async findByEmail(email: string): Promise<AccountModel | null> {
       return new Promise((resolve) => resolve(makeFakeAccount()));
     }
   }
@@ -90,25 +90,27 @@ const makeSut = (): SutType => {
 describe("DbAuthentication UseCase", () => {
   test("should call FindAccountByEmailRepository with correct values", async () => {
     const { sut, findAccountByEmailRepositoryStub } = makeSut();
-    const findSpy = vi.spyOn(findAccountByEmailRepositoryStub, "find");
+    const findSpy = vi.spyOn(findAccountByEmailRepositoryStub, "findByEmail");
     await sut.auth(makeFakeAuthentication());
     expect(findSpy).toHaveBeenCalledWith("any_email@mail.com");
   });
 
   test("should throw if FindAccountByEmailRepository throws", async () => {
     const { sut, findAccountByEmailRepositoryStub } = makeSut();
-    vi.spyOn(findAccountByEmailRepositoryStub, "find").mockRejectedValueOnce(
-      new Error()
-    );
+    vi.spyOn(
+      findAccountByEmailRepositoryStub,
+      "findByEmail"
+    ).mockRejectedValueOnce(new Error());
     const promise = sut.auth(makeFakeAuthentication());
     await expect(promise).rejects.toThrow();
   });
 
   test("should return null if FindAccountByEmailRepository returns null", async () => {
     const { sut, findAccountByEmailRepositoryStub } = makeSut();
-    vi.spyOn(findAccountByEmailRepositoryStub, "find").mockResolvedValueOnce(
-      null
-    );
+    vi.spyOn(
+      findAccountByEmailRepositoryStub,
+      "findByEmail"
+    ).mockResolvedValueOnce(null);
     const accessToken = await sut.auth(makeFakeAuthentication());
     expect(accessToken).toBeNull();
   });

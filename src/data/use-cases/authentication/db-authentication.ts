@@ -16,7 +16,9 @@ export class DbAuthentication implements Authentication {
   ) {}
 
   async auth(data: AuthenticationModel): Promise<string | null> {
-    const account = await this.findAccountByEmailRepository.find(data.email);
+    const account = await this.findAccountByEmailRepository.findByEmail(
+      data.email
+    );
     if (!account) {
       return null;
     }
