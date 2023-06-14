@@ -1,5 +1,5 @@
 import { DbCreateAccount } from "../../../data/use-cases/create-account/db-create-account";
-import { BcryptAdapter } from "../../../infra/criptography/bcrypt-adapter";
+import { BcryptAdapter } from "../../../infra/criptography/bcrypt/bcrypt-adapter";
 import { MongoAccountRepository } from "../../../infra/db/mongodb/account-repository/account";
 import { MongoLogRepository } from "../../../infra/db/mongodb/log-repository/log";
 import { SignUpController } from "../../../presentations/controllers/signup/signup";
