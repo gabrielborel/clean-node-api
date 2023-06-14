@@ -30,7 +30,7 @@ describe.only("MongoDB Account Repository", () => {
     await accountCollection.deleteMany({});
   });
 
-  test("should return an account on success", async () => {
+  test("should return an account on createAccount success", async () => {
     const sut = makeSut();
     const accountData = {
       name: "any_name",
@@ -43,5 +43,21 @@ describe.only("MongoDB Account Repository", () => {
     expect(account.name).toBe(accountData.name);
     expect(account.email).toBe(accountData.email);
     expect(account.password).toBe(accountData.password);
+  });
+
+  test("should return an account on findByEmail success", async () => {
+    const sut = makeSut();
+    const accountData = {
+      name: "any_name",
+      email: "valid_email@mail.com",
+      password: "any_password",
+    };
+    await sut.create(accountData);
+    const account = await sut.findByEmail(accountData.email);
+    expect(account).toBeTruthy();
+    expect(account!.id).toBeTruthy();
+    expect(account!.name).toBe(accountData.name);
+    expect(account!.email).toBe(accountData.email);
+    expect(account!.password).toBe(accountData.password);
   });
 });
