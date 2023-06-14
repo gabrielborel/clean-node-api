@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from "vitest";
 import jwt from "jsonwebtoken";
 import { JwtAdapter } from "./jwt-adapter";
 
-vi.mock("jwt", () => ({
+vi.mock("jsonwebtoken", () => ({
   default: {
     async sign(): Promise<string> {
       return "any_token";
@@ -25,5 +25,11 @@ describe("JWT Adapter", () => {
       },
       "secret"
     );
+  });
+
+  test("should return a token on sign success", async () => {
+    const sut = makeSut();
+    const accessToken = await sut.encrypt("any_id");
+    expect(accessToken).toBe("any_token");
   });
 });
