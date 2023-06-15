@@ -66,4 +66,22 @@ describe.only("MongoDB Account Repository", () => {
     const account = await sut.findByEmail("valid_email@mail.com");
     expect(account).toBeNull();
   });
+
+  test("should update the account accessToken on updateAccessToken success", async () => {
+    const sut = makeSut();
+    const accountData = {
+      name: "any_name",
+      email: "valid_email@mail.com",
+      password: "any_password",
+    };
+    const { id } = await sut.create(accountData);
+    expect(id).toBeTruthy();
+    let account = await sut.findByEmail(accountData.email);
+    expect(account).toBeTruthy();
+    expect(account!.accessToken).toBeFalsy();
+    await sut.updateAccessToken(id, "any_token");
+    account = await sut.findByEmail(accountData.email);
+    expect(account).toBeTruthy();
+    expect(account!.accessToken).toBe("any_token");
+  });
 });
