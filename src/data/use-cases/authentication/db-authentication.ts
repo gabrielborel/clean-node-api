@@ -11,7 +11,7 @@ export class DbAuthentication implements Authentication {
   constructor(
     private readonly findAccountByEmailRepository: FindAccountByEmailRepository,
     private readonly hashComparer: HashComparer,
-    private readonly Encrypter: Encrypter,
+    private readonly encrypter: Encrypter,
     private readonly updateAccessTokenRepository: UpdateAccessTokenRepository
   ) {}
 
@@ -31,7 +31,7 @@ export class DbAuthentication implements Authentication {
       return null;
     }
 
-    const accessToken = await this.Encrypter.encrypt(account.id);
+    const accessToken = await this.encrypter.encrypt(account.id);
     await this.updateAccessTokenRepository.updateAccessToken(
       account.id,
       accessToken
