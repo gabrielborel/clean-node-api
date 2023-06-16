@@ -14,6 +14,7 @@ const makeFakeAccount = (): AccountModel => ({
   name: "valid_name",
   email: "any_email@mail.com",
   password: "hashed_password",
+  accessToken: "valid_token",
 });
 
 const makeFakeAuthentication = (): AuthenticationModel => ({
