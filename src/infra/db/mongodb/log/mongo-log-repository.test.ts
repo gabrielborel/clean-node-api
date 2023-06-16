@@ -1,5 +1,5 @@
 import { MongoHelper } from "../helpers/mongo-helper";
-import { MongoLogRepository } from "./log";
+import { MongoLogRepository } from "./mongo-log-repository";
 import {
   test,
   describe,

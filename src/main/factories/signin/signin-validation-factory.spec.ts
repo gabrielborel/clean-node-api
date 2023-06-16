@@ -4,7 +4,7 @@ import {
   ValidationComposite,
 } from "../../../presentations/helpers/validators";
 import { EmailValidator } from "../../../presentations/protocols/email-validator";
-import { makeSignUpValidation } from "./signup-validation";
+import { makeSignInValidation } from "./signin-validation-factory";
 import { test, describe, vi, expect } from "vitest";
 
 vi.mock("../../../presentations/helpers/validators/validation-composite");
@@ -18,11 +18,10 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub();
 };
 
-describe("SignUpValidation Factory", () => {
+describe("SignInValidation Factory", () => {
   test("should call ValidationComposite with all validations", () => {
-    makeSignUpValidation();
+    makeSignInValidation();
     expect(ValidationComposite).toHaveBeenCalledWith([
-      new RequiredFieldValidation("name"),
       new RequiredFieldValidation("email"),
       new RequiredFieldValidation("password"),
       new EmailValidation("email", makeEmailValidator()),

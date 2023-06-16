@@ -8,7 +8,7 @@ import {
 } from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { MongoHelper } from "../helpers/mongo-helper";
-import { MongoAccountRepository } from "./account";
+import { MongoAccountRepository } from "./mongo-account-repository";
 
 const makeSut = (): MongoAccountRepository => {
   return new MongoAccountRepository();

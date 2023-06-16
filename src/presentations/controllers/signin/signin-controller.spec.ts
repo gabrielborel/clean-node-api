@@ -10,9 +10,9 @@ import {
   HttpRequest,
   Authentication,
   AuthenticationModel,
-} from "./signin-protocols";
-import { SignInController } from "./signin";
-import { Validation } from "../signup/signup-protocols";
+} from "./signin-controller-protocols";
+import { SignInController } from "./signin-controller";
+import { Validation } from "../signup/signup-controller-protocols";
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {

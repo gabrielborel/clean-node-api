@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
-import { CreateAccountRepository } from "../../../../data/protocols/db/create-account-repository";
-import { FindAccountByEmailRepository } from "../../../../data/protocols/db/find-account-by-email-repository";
-import { UpdateAccessTokenRepository } from "../../../../data/protocols/db/update-access-token-repository";
+import { CreateAccountRepository } from "../../../../data/protocols/db/account/create-account-repository";
+import { FindAccountByEmailRepository } from "../../../../data/protocols/db/account/find-account-by-email-repository";
+import { UpdateAccessTokenRepository } from "../../../../data/protocols/db/account/update-access-token-repository";
 import { AccountModel } from "../../../../domain/models/account";
 import { CreateAccountModel } from "../../../../domain/use-cases/create-account";
 import { MongoHelper } from "../helpers/mongo-helper";

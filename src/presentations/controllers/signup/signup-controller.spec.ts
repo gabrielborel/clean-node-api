@@ -4,14 +4,14 @@ import {
   created,
   serverError,
 } from "../../helpers/http/http-helper";
-import { SignUpController } from "./signup";
+import { SignUpController } from "./signup-controller";
 import {
   AccountModel,
   CreateAccount,
   CreateAccountModel,
   HttpRequest,
   Validation,
-} from "./signup-protocols";
+} from "./signup-controller-protocols";
 import { test, describe, vi, expect } from "vitest";
 
 const makeCreateAccount = (): CreateAccount => {

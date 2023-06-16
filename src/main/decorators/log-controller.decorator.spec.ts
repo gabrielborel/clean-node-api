@@ -1,4 +1,4 @@
-import { LogErrorRepository } from "../../data/protocols/db/log-error-repository";
+import { LogErrorRepository } from "../../data/protocols/db/log/log-error-repository";
 import { AccountModel } from "../../domain/models/account";
 import {
   created,
@@ -9,7 +9,7 @@ import {
   HttpRequest,
   HttpResponse,
 } from "../../presentations/protocols";
-import { LogControllerDecorator } from "./log";
+import { LogControllerDecorator } from "./log-controller-decorator";
 import { test, describe, vi, expect } from "vitest";
 
 const makeLogErrorRepositoryStub = (): LogErrorRepository => {
