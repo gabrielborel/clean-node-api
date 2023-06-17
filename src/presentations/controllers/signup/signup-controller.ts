@@ -1,6 +1,8 @@
+import { ParamAlreadyInUseError } from "../../errors";
 import {
   badRequest,
   created,
+  forbidden,
   serverError,
 } from "../../helpers/http/http-helper";
 import { Authentication } from "../signin/signin-controller-protocols";
@@ -27,11 +29,15 @@ export class SignUpController implements Controller {
       }
 
       const { name, email, password } = request.body;
-      await this.createAccount.create({
+
+      const account = await this.createAccount.create({
         name,
         email,
         password,
       });
+      if (!account) {
+        return forbidden(new ParamAlreadyInUseError("email"));
+      }
 
       const accessToken = await this.authentication.auth({
         email,
