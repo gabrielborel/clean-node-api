@@ -27,7 +27,7 @@ export class SignUpController implements Controller {
       }
 
       const { name, email, password } = request.body;
-      const account = await this.createAccount.create({
+      await this.createAccount.create({
         name,
         email,
         password,
@@ -38,7 +38,9 @@ export class SignUpController implements Controller {
         password,
       });
 
-      return created(account);
+      return created({
+        accessToken: accessToken,
+      });
     } catch (error) {
       return serverError(error as Error);
     }
