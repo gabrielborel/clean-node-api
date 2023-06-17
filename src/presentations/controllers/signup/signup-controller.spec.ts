@@ -140,4 +140,14 @@ describe("SignUp Controller", () => {
       password: httpRequest.body.password,
     });
   });
+
+  test("should return 500 if Authentication throws", async () => {
+    const { sut, authenticationStub } = makeSut();
+    vi.spyOn(authenticationStub, "auth").mockImplementationOnce(() => {
+      return new Promise<string>((resolve, reject) => reject(new Error()));
+    });
+    const httpRequest = makeFakeRequest();
+    const response = await sut.handle(httpRequest);
+    expect(response).toEqual(serverError(new Error()));
+  });
 });
