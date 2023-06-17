@@ -46,10 +46,7 @@ describe("Login Routes", async () => {
         password: "Any Password",
       });
       expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty("id");
-      expect(response.body.name).toBe("Any Name");
-      expect(response.body.email).toBe("any_email@mail.com");
-      expect(response.body.password).toBeTruthy();
+      expect(response.body.accessToken).toBeTruthy();
     });
   });
 
