@@ -1,10 +1,16 @@
 import { Express, Router } from "express";
-import fg from "fast-glob";
+import { readdir } from "fs/promises";
 
-export const setupRoutes = (app: Express): void => {
+export const setupRoutes = async (app: Express): Promise<void> => {
   const router = Router();
   app.use("/api", router);
-  fg.sync("**/src/main/routes/**routes.ts").map(async (file) => {
-    (await import(`../../../${file}`)).default(router);
+
+  await readdir(`${__dirname}/../routes`).then(async (files) => {
+    for (const file of files) {
+      if (file.includes(".test.")) continue;
+      await import(`../routes/${file}`).then((module) => {
+        module.default(router);
+      });
+    }
   });
 };
