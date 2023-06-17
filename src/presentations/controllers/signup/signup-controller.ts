@@ -3,6 +3,7 @@ import {
   created,
   serverError,
 } from "../../helpers/http/http-helper";
+import { Authentication } from "../signin/signin-controller-protocols";
 import {
   Controller,
   CreateAccount,
@@ -14,7 +15,8 @@ import {
 export class SignUpController implements Controller {
   constructor(
     private readonly createAccount: CreateAccount,
-    private readonly validation: Validation
+    private readonly validation: Validation,
+    private readonly authentication: Authentication
   ) {}
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
@@ -24,7 +26,18 @@ export class SignUpController implements Controller {
         return badRequest(error);
       }
 
-      const account = await this.createAccount.create(request.body);
+      const { name, email, password } = request.body;
+      const account = await this.createAccount.create({
+        name,
+        email,
+        password,
+      });
+
+      const accessToken = await this.authentication.auth({
+        email,
+        password,
+      });
+
       return created(account);
     } catch (error) {
       return serverError(error as Error);
