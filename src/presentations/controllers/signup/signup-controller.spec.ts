@@ -1,21 +1,26 @@
-import { InvalidParamError, ServerError } from "../../errors";
+import {
+  InvalidParamError,
+  ParamAlreadyInUseError,
+  ServerError,
+} from "../../errors";
 import {
   badRequest,
   created,
+  forbidden,
   serverError,
 } from "../../helpers/http/http-helper";
 
+import { describe, expect, test, vi } from "vitest";
 import { SignUpController } from "./signup-controller";
 import {
   AccountModel,
+  Authentication,
+  AuthenticationModel,
   CreateAccount,
   CreateAccountModel,
   HttpRequest,
   Validation,
-  Authentication,
-  AuthenticationModel,
 } from "./signup-controller-protocols";
-import { test, describe, vi, expect } from "vitest";
 
 const makeCreateAccount = (): CreateAccount => {
   class CreateAccountStub implements CreateAccount {
@@ -96,14 +101,18 @@ describe("SignUp Controller", () => {
 
   test("should return 500 if CreateAccount throws", async () => {
     const { sut, createAccountStub } = makeSut();
-    vi.spyOn(createAccountStub, "create").mockImplementationOnce(() => {
-      return new Promise<AccountModel>((resolve, reject) =>
-        reject(new Error())
-      );
-    });
+    vi.spyOn(createAccountStub, "create").mockRejectedValueOnce(new Error());
     const request = makeFakeRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(serverError(new ServerError("")));
+  });
+
+  test("should return 403 if CreateAccount returns null", async () => {
+    const { sut, createAccountStub } = makeSut();
+    vi.spyOn(createAccountStub, "create").mockResolvedValue(null);
+    const request = makeFakeRequest();
+    const response = await sut.handle(request);
+    expect(response).toEqual(forbidden(new ParamAlreadyInUseError("email")));
   });
 
   test("should return 201 if valid data is provided", async () => {
