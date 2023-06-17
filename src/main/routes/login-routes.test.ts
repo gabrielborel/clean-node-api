@@ -34,7 +34,7 @@ describe("Login Routes", async () => {
   });
 
   describe("POST /signup", () => {
-    test("should return an account on signup", async () => {
+    test("should return 201 on signup", async () => {
       /**
        * IDK why but this timeout is necessary, if not, the test will return 404
        * like the application hasn't build yet and the test make the request
@@ -54,18 +54,13 @@ describe("Login Routes", async () => {
   });
 
   describe("POST /signin", () => {
-    test("should return success on login", async () => {
+    test("should return 200 on login", async () => {
       const password = await hash("any password", 12);
       await accountCollection.insertOne({
         name: "Any Name",
         email: "any_email@mail.com",
         password,
       });
-      /**
-       * IDK why but this timeout is necessary, if not, the test will return 404
-       * like the application hasn't build yet and the test make the request
-       */
-      // await timeout(200);
       const response = await request(app).post("/api/signin").send({
         email: "any_email@mail.com",
         password: "any password",
