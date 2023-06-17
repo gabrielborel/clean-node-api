@@ -20,7 +20,7 @@ services:
       - "9222:9222"
     command: bash -c "npm install --omit=dev && npm run debug"
     volumes:
-      - ./dist:/usr/src/app/dist
+      - ./dist/:/usr/src/app/dist/
       - ./package.json:/usr/src/app/package.json
     links:
       - database
