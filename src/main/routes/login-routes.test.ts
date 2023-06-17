@@ -54,7 +54,7 @@ describe("Login Routes", async () => {
   });
 
   describe("POST /signin", () => {
-    test("should return 200 on login", async () => {
+    test("should return 200 on signin", async () => {
       const password = await hash("any password", 12);
       await accountCollection.insertOne({
         name: "Any Name",
@@ -67,5 +67,13 @@ describe("Login Routes", async () => {
       });
       expect(response.status).toBe(200);
     });
+  });
+
+  test("should return 401 on signin", async () => {
+    const response = await request(app).post("/api/signin").send({
+      email: "any_email@mail.com",
+      password: "any password",
+    });
+    expect(response.status).toBe(401);
   });
 });
