@@ -32,7 +32,7 @@ const makeFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
     implements FindAccountByEmailRepository
   {
     async findByEmail(email: string): Promise<AccountModel | null> {
-      return new Promise((resolve) => resolve(makeFakeAccount()));
+      return new Promise((resolve) => resolve(null));
     }
   }
   return new FindAccountByEmailRepositoryStub();
@@ -131,5 +131,16 @@ describe("DbCreateAccount UseCase", () => {
     const findSpy = vi.spyOn(findAccountByEmailRepositoryStub, "findByEmail");
     await sut.create(makeFakeAccountData());
     expect(findSpy).toHaveBeenCalledWith("valid_email@mail.com");
+  });
+
+  test("should return null if FindAccountByEmailRepository returns an account", async () => {
+    const { sut, findAccountByEmailRepositoryStub } = makeSut();
+    vi.spyOn(
+      findAccountByEmailRepositoryStub,
+      "findByEmail"
+    ).mockResolvedValueOnce(makeFakeAccount());
+    const accountData = makeFakeAccountData();
+    const createdAccount = await sut.create(accountData);
+    expect(createdAccount).toBeNull();
   });
 });
