@@ -4,6 +4,7 @@ import {
   created,
   serverError,
 } from "../../helpers/http/http-helper";
+
 import { SignUpController } from "./signup-controller";
 import {
   AccountModel,
@@ -11,6 +12,8 @@ import {
   CreateAccountModel,
   HttpRequest,
   Validation,
+  Authentication,
+  AuthenticationModel,
 } from "./signup-controller-protocols";
 import { test, describe, vi, expect } from "vitest";
 
@@ -33,6 +36,15 @@ const makeValidation = (): Validation => {
   return new ValidationStub();
 };
 
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    async auth(data: AuthenticationModel): Promise<string> {
+      return new Promise((resolve, reject) => resolve("access_token"));
+    }
+  }
+  return new AuthenticationStub();
+};
+
 const makeFakeRequest = (): HttpRequest => ({
   body: {
     name: "any_name",
@@ -53,16 +65,19 @@ interface SutType {
   sut: SignUpController;
   createAccountStub: CreateAccount;
   validationStub: Validation;
+  authenticationStub: Authentication;
 }
 
 const makeSut = (): SutType => {
-  const createAccountStub = makeCreateAccount();
-  const validationStub = makeValidation();
-  const sut = new SignUpController(createAccountStub, validationStub);
+  const createAccount = makeCreateAccount();
+  const validation = makeValidation();
+  const authentication = makeAuthentication();
+  const sut = new SignUpController(createAccount, validation, authentication);
   return {
     sut,
-    createAccountStub,
-    validationStub,
+    createAccountStub: createAccount,
+    validationStub: validation,
+    authenticationStub: authentication,
   };
 };
 
@@ -113,5 +128,16 @@ describe("SignUp Controller", () => {
     const request = makeFakeRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(badRequest(new InvalidParamError("any_field")));
+  });
+
+  test("should call Authentication with correct values", async () => {
+    const { sut, authenticationStub } = makeSut();
+    const authenticationSpy = vi.spyOn(authenticationStub, "auth");
+    const httpRequest = makeFakeRequest();
+    await sut.handle(httpRequest);
+    expect(authenticationSpy).toHaveBeenCalledWith({
+      email: httpRequest.body.email,
+      password: httpRequest.body.password,
+    });
   });
 });
