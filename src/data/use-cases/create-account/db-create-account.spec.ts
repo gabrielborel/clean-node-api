@@ -4,6 +4,7 @@ import {
   AccountModel,
   CreateAccountModel,
   CreateAccountRepository,
+  FindAccountByEmailRepository,
   Hasher,
 } from "./db-create-account-protocols";
 
@@ -26,6 +27,17 @@ const makeCreateAccountRepository = (): CreateAccountRepository => {
   return new CreateAccountRepositoryStub();
 };
 
+const makeFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
+  class FindAccountByEmailRepositoryStub
+    implements FindAccountByEmailRepository
+  {
+    async findByEmail(email: string): Promise<AccountModel | null> {
+      return new Promise((resolve) => resolve(makeFakeAccount()));
+    }
+  }
+  return new FindAccountByEmailRepositoryStub();
+};
+
 const makeFakeAccount = (): AccountModel => ({
   id: "valid_id",
   name: "valid_name",
@@ -44,13 +56,24 @@ interface SutType {
   sut: DbCreateAccount;
   hasherStub: Hasher;
   createAccountRepositoryStub: CreateAccountRepository;
+  findAccountByEmailRepositoryStub: FindAccountByEmailRepository;
 }
 
 const makeSut = (): SutType => {
   const hasherStub = makeHasher();
   const createAccountRepositoryStub = makeCreateAccountRepository();
-  const sut = new DbCreateAccount(hasherStub, createAccountRepositoryStub);
-  return { sut, hasherStub, createAccountRepositoryStub };
+  const findAccountByEmailRepositoryStub = makeFindAccountByEmailRepository();
+  const sut = new DbCreateAccount(
+    hasherStub,
+    createAccountRepositoryStub,
+    findAccountByEmailRepositoryStub
+  );
+  return {
+    sut,
+    hasherStub,
+    createAccountRepositoryStub,
+    findAccountByEmailRepositoryStub,
+  };
 };
 
 describe("DbCreateAccount UseCase", () => {
@@ -64,10 +87,7 @@ describe("DbCreateAccount UseCase", () => {
 
   test("should throw if Hasher throws", async () => {
     const { sut, hasherStub } = makeSut();
-    vi.spyOn(hasherStub, "hash").mockReturnValueOnce(
-      new Promise((resolve, reject) => reject(new Error()))
-    );
-
+    vi.spyOn(hasherStub, "hash").mockRejectedValueOnce(new Error());
     const accountData = makeFakeAccountData();
     const promise = sut.create(accountData);
     await expect(promise).rejects.toThrow();
@@ -87,10 +107,9 @@ describe("DbCreateAccount UseCase", () => {
 
   test("should throw if CreateAccountRepository throws", async () => {
     const { sut, createAccountRepositoryStub } = makeSut();
-    vi.spyOn(createAccountRepositoryStub, "create").mockReturnValueOnce(
-      new Promise((resolve, reject) => reject(new Error()))
+    vi.spyOn(createAccountRepositoryStub, "create").mockRejectedValueOnce(
+      new Error()
     );
-
     const accountData = makeFakeAccountData();
     const promise = sut.create(accountData);
     await expect(promise).rejects.toThrow();
@@ -100,10 +119,17 @@ describe("DbCreateAccount UseCase", () => {
     const { sut } = makeSut();
     const accountData = {
       name: "valid_name",
-      email: "valid_email",
+      email: "valid_email@mail.com",
       password: "valid_password",
     };
     const createdAccount = await sut.create(accountData);
     expect(createdAccount).toEqual(makeFakeAccount());
+  });
+
+  test("should call FindAccountByEmailRepository with correct values", async () => {
+    const { sut, findAccountByEmailRepositoryStub } = makeSut();
+    const findSpy = vi.spyOn(findAccountByEmailRepositoryStub, "findByEmail");
+    await sut.create(makeFakeAccountData());
+    expect(findSpy).toHaveBeenCalledWith("valid_email@mail.com");
   });
 });
