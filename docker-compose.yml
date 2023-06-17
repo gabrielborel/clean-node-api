@@ -12,13 +12,13 @@ services:
 
   app:
     container_name: app-api
-    build: .
+    image: node:18
+    working_dir: /usr/src/app
     restart: always
-    image: clean-node-api
     ports:
       - "3333:3333"
       - "9222:9222"
-    command: npm run debug
+    command: bash -c "npm install --omit=dev && npm run debug"
     volumes:
       - ./dist:/usr/src/app/dist
       - ./package.json:/usr/src/app/package.json
