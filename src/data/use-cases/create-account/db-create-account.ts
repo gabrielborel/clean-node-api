@@ -15,7 +15,12 @@ export class DbCreateAccount implements CreateAccount {
   ) {}
 
   async create(accountData: CreateAccountModel): Promise<AccountModel | null> {
-    await this.findAccountByEmailRepository.findByEmail(accountData.email);
+    const accountExists = await this.findAccountByEmailRepository.findByEmail(
+      accountData.email
+    );
+    if (accountExists) {
+      return null;
+    }
     const hashedPassword = await this.hasher.hash(accountData.password);
     const account = Object.assign({}, accountData, {
       password: hashedPassword,
