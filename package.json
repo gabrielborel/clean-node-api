@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/main/server.js",
     "build": "rm -rf dist && tsc",
-    "dev": "tsx watch src/main/server.ts",
+    "dev": "npm run build && docker-compose up",
     "test": "npx vitest --run --silent --passWithNoTests ",
     "test:verbose": "npx vitest",
     "test:integration": "npx vitest -c vitest-integration.config.ts",
