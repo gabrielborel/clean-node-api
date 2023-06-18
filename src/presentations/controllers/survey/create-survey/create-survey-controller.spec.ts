@@ -1,18 +1,34 @@
 import { describe, test, vi, expect } from "vitest";
-import { HttpRequest } from "./create-survey-controller-protocols";
+import {
+  CreateSurvey,
+  CreateSurveyModel,
+  HttpRequest,
+} from "./create-survey-controller-protocols";
 import { CreateSurveyController } from "./create-survey-controller";
 import { Validation } from "../../../protocols/validation";
 import { badRequest } from "../../../helpers/http/http-helper";
 
-class ValidationStub implements Validation {
-  validate(data: any): Error | null {
-    return null;
+const makeValidationStub = (): Validation => {
+  class ValidationStub implements Validation {
+    validate(data: any): Error | null {
+      return null;
+    }
   }
-}
+  return new ValidationStub();
+};
+
+const makeCreateSurveyStub = (): CreateSurvey => {
+  class CreateSurveyStub implements CreateSurvey {
+    async create(data: CreateSurveyModel): Promise<void> {
+      return new Promise((resolve) => resolve());
+    }
+  }
+  return new CreateSurveyStub();
+};
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
-    questions: "any_question",
+    question: "any_question",
     answers: [
       {
         image: "any_image",
@@ -24,13 +40,15 @@ const makeFakeRequest = (): HttpRequest => ({
 
 interface SutType {
   sut: CreateSurveyController;
-  validationStub: ValidationStub;
+  validationStub: Validation;
+  createSurveyStub: CreateSurvey;
 }
 
 const makeSut = (): SutType => {
-  const validationStub = new ValidationStub();
-  const sut = new CreateSurveyController(validationStub);
-  return { sut, validationStub };
+  const validationStub = makeValidationStub();
+  const createSurveyStub = makeCreateSurveyStub();
+  const sut = new CreateSurveyController(validationStub, createSurveyStub);
+  return { sut, validationStub, createSurveyStub };
 };
 
 describe("CreateSurveyController", () => {
@@ -48,5 +66,13 @@ describe("CreateSurveyController", () => {
     vi.spyOn(validationStub, "validate").mockReturnValueOnce(new Error());
     const response = await sut.handle(request);
     expect(response).toEqual(badRequest(new Error()));
+  });
+
+  test("should call CreateSurvey with correct values", async () => {
+    const { sut, createSurveyStub } = makeSut();
+    const request = makeFakeRequest();
+    const createSpy = vi.spyOn(createSurveyStub, "create");
+    await sut.handle(request);
+    expect(createSpy).toHaveBeenCalledWith(request.body);
   });
 });
