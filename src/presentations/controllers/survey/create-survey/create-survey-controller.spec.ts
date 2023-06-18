@@ -2,6 +2,7 @@ import { describe, test, vi, expect } from "vitest";
 import { HttpRequest } from "./create-survey-controller-protocols";
 import { CreateSurveyController } from "./create-survey-controller";
 import { Validation } from "../../../protocols/validation";
+import { badRequest } from "../../../helpers/http/http-helper";
 
 class ValidationStub implements Validation {
   validate(data: any): Error | null {
@@ -39,5 +40,13 @@ describe("CreateSurveyController", () => {
     const validateSpy = vi.spyOn(validationStub, "validate");
     await sut.handle(request);
     expect(validateSpy).toHaveBeenCalledWith(request.body);
+  });
+
+  test("should return 400 if Validation fails", async () => {
+    const { sut, validationStub } = makeSut();
+    const request = makeFakeRequest();
+    vi.spyOn(validationStub, "validate").mockReturnValueOnce(new Error());
+    const response = await sut.handle(request);
+    expect(response).toEqual(badRequest(new Error()));
   });
 });
