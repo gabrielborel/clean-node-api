@@ -1,13 +1,13 @@
+import { EmailValidator } from "../../../../validation/protocols/email-validator";
 import {
   EmailValidation,
   RequiredFieldValidation,
   ValidationComposite,
-} from "../../../../presentations/helpers/validators";
-import { EmailValidator } from "../../../../presentations/protocols/email-validator";
+} from "../../../../validation/validators";
 import { makeSignInValidation } from "./signin-validation-factory";
 import { test, describe, vi, expect } from "vitest";
 
-vi.mock("../../../../presentations/helpers/validators/validation-composite");
+vi.mock("../../../../validation/validators/validation-composite");
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {

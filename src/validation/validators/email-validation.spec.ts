@@ -1,5 +1,5 @@
-import { EmailValidator } from "../../controllers/signup/signup-controller-protocols";
-import { InvalidParamError } from "../../errors";
+import { InvalidParamError } from "../../presentations/errors";
+import { EmailValidator } from "../protocols/email-validator";
 import { EmailValidation } from "./email-validation";
 import { test, describe, vi, expect } from "vitest";
 

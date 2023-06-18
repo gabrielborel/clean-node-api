@@ -1,4 +1,4 @@
-import { MissingParamError } from "../../errors";
+import { MissingParamError } from "../../presentations/errors";
 import { RequiredFieldValidation } from "./required-field-validation";
 import { test, describe, expect } from "vitest";
 

@@ -1,13 +1,13 @@
+import { EmailValidator } from "../../../../validation/protocols/email-validator";
 import {
   EmailValidation,
   RequiredFieldValidation,
   ValidationComposite,
-} from "../../../../presentations/helpers/validators";
-import { EmailValidator } from "../../../../presentations/protocols/email-validator";
+} from "../../../../validation/validators";
 import { makeSignUpValidation } from "./signup-validation-factory";
 import { test, describe, vi, expect } from "vitest";
 
-vi.mock("../../../../presentations/helpers/validators/validation-composite");
+vi.mock("../../../../validation/validators/validation-composite");
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -21,7 +21,6 @@ const makeEmailValidator = (): EmailValidator => {
 describe("SignUpValidation Factory", () => {
   test("should call ValidationComposite with all validations", () => {
     makeSignUpValidation();
-    console.log(makeSignUpValidation());
     expect(ValidationComposite).toHaveBeenCalledWith([
       new RequiredFieldValidation("name"),
       new RequiredFieldValidation("email"),
