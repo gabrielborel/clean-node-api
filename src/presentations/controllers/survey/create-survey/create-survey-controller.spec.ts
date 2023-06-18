@@ -6,7 +6,7 @@ import {
 } from "./create-survey-controller-protocols";
 import { CreateSurveyController } from "./create-survey-controller";
 import { Validation } from "../../../protocols/validation";
-import { badRequest } from "../../../helpers/http/http-helper";
+import { badRequest, serverError } from "../../../helpers/http/http-helper";
 
 const makeValidationStub = (): Validation => {
   class ValidationStub implements Validation {
@@ -74,5 +74,15 @@ describe("CreateSurveyController", () => {
     const createSpy = vi.spyOn(createSurveyStub, "create");
     await sut.handle(request);
     expect(createSpy).toHaveBeenCalledWith(request.body);
+  });
+
+  test("should return 500 if CreateSurvey throws", async () => {
+    const { sut, createSurveyStub } = makeSut();
+    const request = makeFakeRequest();
+    vi.spyOn(createSurveyStub, "create").mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const response = await sut.handle(request);
+    expect(response).toEqual(serverError(new Error()));
   });
 });
