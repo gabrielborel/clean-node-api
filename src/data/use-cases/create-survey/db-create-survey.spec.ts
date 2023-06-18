@@ -43,4 +43,13 @@ describe("DbCreateSurvey Use Case", () => {
     await sut.create(surveyData);
     expect(createSpy).toHaveBeenCalledWith(surveyData);
   });
+
+  test("should throw if CreateSurveyRepository throws", async () => {
+    const { sut, createSurveyRepositoryStub } = makeSut();
+    vi.spyOn(createSurveyRepositoryStub, "create").mockRejectedValueOnce(
+      new Error()
+    );
+    const promise = sut.create(makeFakeSurveyData());
+    await expect(promise).rejects.toThrow();
+  });
 });
