@@ -6,7 +6,11 @@ import {
 } from "./create-survey-controller-protocols";
 import { CreateSurveyController } from "./create-survey-controller";
 import { Validation } from "../../../protocols/validation";
-import { badRequest, serverError } from "../../../helpers/http/http-helper";
+import {
+  badRequest,
+  noContent,
+  serverError,
+} from "../../../helpers/http/http-helper";
 
 const makeValidationStub = (): Validation => {
   class ValidationStub implements Validation {
@@ -84,5 +88,12 @@ describe("CreateSurveyController", () => {
     });
     const response = await sut.handle(request);
     expect(response).toEqual(serverError(new Error()));
+  });
+
+  test("should return 204 on success", async () => {
+    const { sut } = makeSut();
+    const request = makeFakeRequest();
+    const response = await sut.handle(request);
+    expect(response).toEqual(noContent());
   });
 });
