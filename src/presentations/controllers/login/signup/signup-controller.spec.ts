@@ -2,13 +2,13 @@ import {
   InvalidParamError,
   ParamAlreadyInUseError,
   ServerError,
-} from "../../errors";
+} from "../../../errors";
 import {
   badRequest,
   created,
   forbidden,
   serverError,
-} from "../../helpers/http/http-helper";
+} from "../../../helpers/http/http-helper";
 
 import { describe, expect, test, vi } from "vitest";
 import { SignUpController } from "./signup-controller";

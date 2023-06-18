@@ -1,10 +1,10 @@
-import { ParamAlreadyInUseError } from "../../errors";
+import { ParamAlreadyInUseError } from "../../../errors";
 import {
   badRequest,
   created,
   forbidden,
   serverError,
-} from "../../helpers/http/http-helper";
+} from "../../../helpers/http/http-helper";
 import { Authentication } from "../signin/signin-controller-protocols";
 import {
   Controller,

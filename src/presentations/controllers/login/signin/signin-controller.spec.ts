@@ -1,18 +1,18 @@
 import { test, describe, vi, expect } from "vitest";
-import { InvalidParamError, ServerError } from "../../errors";
-import {
-  badRequest,
-  ok,
-  serverError,
-  unauthorized,
-} from "../../helpers/http/http-helper";
+import { InvalidParamError, ServerError } from "../../../errors";
 import {
   HttpRequest,
   Authentication,
   AuthenticationModel,
 } from "./signin-controller-protocols";
 import { SignInController } from "./signin-controller";
-import { Validation } from "../signup/signup-controller-protocols";
+import { Validation } from "../../../protocols/validation";
+import {
+  badRequest,
+  serverError,
+  unauthorized,
+  ok,
+} from "../../../helpers/http/http-helper";
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -87,6 +87,7 @@ describe("SignIn Controller", () => {
 
   test("should return 200 if valid credentials are provided", async () => {
     const { sut } = makeSut();
+    console.log(sut);
     const request = makeFakeRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(ok({ accessToken: "access_token" }));
