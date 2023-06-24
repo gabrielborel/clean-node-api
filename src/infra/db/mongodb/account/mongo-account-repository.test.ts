@@ -101,4 +101,22 @@ describe.only("MongoDB Account Repository", () => {
     expect(account!.email).toBe(accountData.email);
     expect(account!.password).toBe(accountData.password);
   });
+
+  test("should return an account on findByAccessToken success, with role", async () => {
+    const sut = makeSut();
+    const accountData = {
+      name: "any_name",
+      email: "valid_email@mail.com",
+      password: "any_password",
+      accessToken: "any_token",
+      role: "any_role",
+    };
+    await sut.create(accountData);
+    const account = await sut.findByAccessToken("any_token", "any_role");
+    expect(account).toBeTruthy();
+    expect(account!.id).toBeTruthy();
+    expect(account!.name).toBe(accountData.name);
+    expect(account!.email).toBe(accountData.email);
+    expect(account!.password).toBe(accountData.password);
+  });
 });
