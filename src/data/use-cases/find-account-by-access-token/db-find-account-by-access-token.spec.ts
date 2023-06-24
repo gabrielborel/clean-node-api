@@ -23,10 +23,10 @@ const makeSut = (): SutType => {
 };
 
 describe("DbFindAccountByAccessToken Use Case", () => {
-  test("should call Decrypter with correct values", () => {
+  test("should call Decrypter with correct values", async () => {
     const { sut, decrypterStub } = makeSut();
     const decryptSpy = vi.spyOn(decrypterStub, "decrypt");
-    sut.find("any_token");
+    await sut.find("any_token");
     expect(decryptSpy).toHaveBeenCalledWith("any_token");
   });
 });
