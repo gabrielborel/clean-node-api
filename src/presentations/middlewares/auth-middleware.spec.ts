@@ -37,9 +37,9 @@ interface SutType {
   findAccountByAccessTokenStub: FindAccountByAccessToken;
 }
 
-const makeSut = (): SutType => {
+const makeSut = (role?: string): SutType => {
   const findAccountByAccessToken = makeFindAccountByAccessTokenStub();
-  const sut = new AuthMiddleware(findAccountByAccessToken);
+  const sut = new AuthMiddleware(findAccountByAccessToken, role);
   return { sut, findAccountByAccessTokenStub: findAccountByAccessToken };
 };
 
@@ -53,14 +53,15 @@ describe("Auth Middleware", () => {
   });
 
   test("should call FindAccountByAccessToken with correct accessToken", async () => {
-    const { sut, findAccountByAccessTokenStub } = makeSut();
+    const role = "any_role";
+    const { sut, findAccountByAccessTokenStub } = makeSut(role);
     const httpRequest = makeFakeRequest();
     const findAccountByAccessTokenSpy = vi.spyOn(
       findAccountByAccessTokenStub,
       "find"
     );
     await sut.handle(httpRequest);
-    expect(findAccountByAccessTokenSpy).toHaveBeenCalledWith("any_token");
+    expect(findAccountByAccessTokenSpy).toHaveBeenCalledWith("any_token", role);
   });
 
   test("should return 403 if FindAccountByAccessToken returns null", async () => {

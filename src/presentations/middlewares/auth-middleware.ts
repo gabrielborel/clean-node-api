@@ -6,7 +6,8 @@ import { Middleware } from "../protocols/middleware";
 
 export class AuthMiddleware implements Middleware {
   constructor(
-    private readonly findAccountByAccessToken: FindAccountByAccessToken
+    private readonly findAccountByAccessToken: FindAccountByAccessToken,
+    private readonly role?: string
   ) {}
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
@@ -14,7 +15,10 @@ export class AuthMiddleware implements Middleware {
       const accessToken = request.headers?.["x-access-token"];
       if (!accessToken) return forbidden(new AccessDeniedError());
 
-      const account = await this.findAccountByAccessToken.find(accessToken);
+      const account = await this.findAccountByAccessToken.find(
+        accessToken,
+        this.role
+      );
       if (!account) return forbidden(new AccessDeniedError());
 
       return ok({ accountId: account.id });
