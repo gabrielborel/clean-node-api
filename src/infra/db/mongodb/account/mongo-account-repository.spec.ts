@@ -119,4 +119,10 @@ describe.only("MongoDB Account Repository", () => {
     expect(account!.email).toBe(accountData.email);
     expect(account!.password).toBe(accountData.password);
   });
+
+  test("should return null if findByAccessToken fails", async () => {
+    const sut = makeSut();
+    const account = await sut.findByEmail("valid_email@mail.com");
+    expect(account).toBeNull();
+  });
 });
