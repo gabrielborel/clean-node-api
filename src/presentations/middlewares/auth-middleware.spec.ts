@@ -1,10 +1,12 @@
 import { describe, expect, test, vi } from "vitest";
-import { HttpRequest } from "../protocols/http";
 import { AccessDeniedError } from "../errors";
 import { forbidden, ok, serverError } from "../helpers/http/http-helper";
 import { AuthMiddleware } from "./auth-middleware";
-import { FindAccountByAccessToken } from "../../domain/use-cases/find-account-by-access-token";
-import { AccountModel } from "../../domain/models/account";
+import {
+  FindAccountByAccessToken,
+  AccountModel,
+  HttpRequest,
+} from "./auth-middleware-protocols";
 
 const makeFakeAccount = (): AccountModel => ({
   id: "valid_id",

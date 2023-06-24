@@ -1,8 +1,11 @@
-import { FindAccountByAccessToken } from "../../domain/use-cases/find-account-by-access-token";
+import {
+  Middleware,
+  FindAccountByAccessToken,
+  HttpRequest,
+  HttpResponse,
+} from "./auth-middleware-protocols";
 import { AccessDeniedError } from "../errors";
 import { forbidden, ok, serverError } from "../helpers/http/http-helper";
-import { HttpRequest, HttpResponse } from "../protocols";
-import { Middleware } from "../protocols/middleware";
 
 export class AuthMiddleware implements Middleware {
   constructor(
