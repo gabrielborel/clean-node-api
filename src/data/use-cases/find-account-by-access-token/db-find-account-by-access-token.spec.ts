@@ -98,4 +98,25 @@ describe("DbFindAccountByAccessToken Use Case", () => {
     const account = await sut.find("any_token");
     expect(account).toEqual(makeFakeAccount());
   });
+
+  test("should throw if Decrypter throws", async () => {
+    const { sut, decrypterStub } = makeSut();
+    vi.spyOn(decrypterStub, "decrypt").mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error()))
+    );
+    const promise = sut.find("any_token");
+    await expect(promise).rejects.toThrow();
+  });
+
+  test("should throw if FindAccountByTokenRepository throws", async () => {
+    const { sut, findAccountByAccessTokenRepositoryStub } = makeSut();
+    vi.spyOn(
+      findAccountByAccessTokenRepositoryStub,
+      "findByAccessToken"
+    ).mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error()))
+    );
+    const promise = sut.find("any_token");
+    await expect(promise).rejects.toThrow();
+  });
 });
