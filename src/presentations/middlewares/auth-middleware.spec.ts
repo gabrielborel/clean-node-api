@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import { HttpRequest } from "../protocols/http";
 import { AccessDeniedError } from "../errors";
-import { forbidden } from "../helpers/http/http-helper";
+import { forbidden, ok } from "../helpers/http/http-helper";
 import { AuthMiddleware } from "./auth-middleware";
 import { FindAccountByAccessToken } from "../../domain/use-cases/find-account-by-access-token";
 import { AccountModel } from "../../domain/models/account";
@@ -71,5 +71,14 @@ describe("Auth Middleware", () => {
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()));
+  });
+
+  test("should return 200 if FindAccountByAccessToken returns an account", async () => {
+    const { sut } = makeSut();
+    const httpRequest = makeFakeRequest();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(ok({
+      accountId: "valid_id",
+    }));
   });
 });
