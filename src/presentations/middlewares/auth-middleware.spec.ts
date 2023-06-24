@@ -27,7 +27,9 @@ const makeFindAccountByAccessTokenStub = () => {
 };
 
 const makeFakeRequest = (): HttpRequest => ({
-  headers: {},
+  headers: {
+    ["x-access-token"]: "any_token",
+  },
 });
 
 interface SutType {
@@ -45,6 +47,7 @@ describe("Auth Middleware", () => {
   test("should return 403 no x-access-token exists in header", async () => {
     const { sut } = makeSut();
     const httpRequest = makeFakeRequest();
+    delete httpRequest.headers?.["x-access-token"];
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()));
   });
@@ -52,7 +55,6 @@ describe("Auth Middleware", () => {
   test("should call FindAccountByAccessToken with correct accessToken", async () => {
     const { sut, findAccountByAccessTokenStub } = makeSut();
     const httpRequest = makeFakeRequest();
-    httpRequest.headers["x-access-token"] = "any_token";
     const findAccountByAccessTokenSpy = vi.spyOn(
       findAccountByAccessTokenStub,
       "find"
