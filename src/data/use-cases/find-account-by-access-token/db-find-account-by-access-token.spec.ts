@@ -1,6 +1,16 @@
 import { describe, test, vi, expect } from "vitest";
 import { Decrypter } from "../../protocols/criptography/decrypter";
 import { DbFindAccountByAccessToken } from "./db-find-account-by-access-token";
+import { AccountModel } from "../create-account/db-create-account-protocols";
+import { FindAccountByAccessTokenRepository } from "../../protocols/db/account/find-account-by-access-token-repository";
+
+const makeFakeAccount = (): AccountModel => ({
+  id: "valid_id",
+  name: "valid_name",
+  email: "any_email@mail.com",
+  password: "hashed_password",
+  accessToken: "valid_token",
+});
 
 const makeDecrypterStub = (): Decrypter => {
   class DecrypterStub implements Decrypter {
@@ -11,15 +21,39 @@ const makeDecrypterStub = (): Decrypter => {
   return new DecrypterStub();
 };
 
+const makeFindAccountByRepositoryStub =
+  (): FindAccountByAccessTokenRepository => {
+    class FindAccountByAccessTokenRepositoryStub
+      implements FindAccountByAccessTokenRepository
+    {
+      async findByAccessToken(
+        accessToken: string,
+        role?: string | undefined
+      ): Promise<AccountModel | null> {
+        return makeFakeAccount();
+      }
+    }
+    return new FindAccountByAccessTokenRepositoryStub();
+  };
+
 interface SutType {
   sut: DbFindAccountByAccessToken;
   decrypterStub: Decrypter;
+  findAccountByAccessTokenRepositoryStub: FindAccountByAccessTokenRepository;
 }
 
 const makeSut = (): SutType => {
   const decrypter = makeDecrypterStub();
-  const sut = new DbFindAccountByAccessToken(decrypter);
-  return { sut, decrypterStub: decrypter };
+  const findAccountByAccessTokenRepository = makeFindAccountByRepositoryStub();
+  const sut = new DbFindAccountByAccessToken(
+    decrypter,
+    findAccountByAccessTokenRepository
+  );
+  return {
+    sut,
+    decrypterStub: decrypter,
+    findAccountByAccessTokenRepositoryStub: findAccountByAccessTokenRepository,
+  };
 };
 
 describe("DbFindAccountByAccessToken Use Case", () => {
@@ -37,5 +71,15 @@ describe("DbFindAccountByAccessToken Use Case", () => {
     );
     const account = await sut.find("any_token");
     expect(account).toBeNull();
+  });
+
+  test("should call FindAccountByTokenRepository with correct value", async () => {
+    const { sut, findAccountByAccessTokenRepositoryStub } = makeSut();
+    const findAccountByTokenSpy = vi.spyOn(
+      findAccountByAccessTokenRepositoryStub,
+      "findByAccessToken"
+    );
+    await sut.find("any_token", "any_role");
+    expect(findAccountByTokenSpy).toHaveBeenCalledWith("any_token", "any_role");
   });
 });
