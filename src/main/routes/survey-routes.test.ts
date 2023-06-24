@@ -1,20 +1,11 @@
-import { Router } from "express";
+import { sign } from "jsonwebtoken";
 import { Collection } from "mongodb";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import { afterAll, beforeAll, beforeEach, describe, test } from "vitest";
 import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper";
-import { adaptRoute } from "../adapters/express-route-adapter";
 import { app } from "../config/app";
-import { makeSignInController } from "../factories/controllers/signin/signin-controller-factory";
-import { makeSignUpController } from "../factories/controllers/signup/signup-controller-factory";
-import { sign } from "jsonwebtoken";
 import { environment } from "../config/env";
-
-export default (router: Router) => {
-  router.post("/signup", adaptRoute(makeSignUpController()));
-  router.post("/signin", adaptRoute(makeSignInController()));
-};
 
 const timeout = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
