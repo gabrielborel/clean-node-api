@@ -7,6 +7,9 @@ vi.mock("jsonwebtoken", () => ({
     async sign(): Promise<string> {
       return "any_token";
     },
+    async verify(): Promise<string> {
+      return "any_value";
+    },
   },
 }));
 
@@ -38,5 +41,12 @@ describe("JWT Adapter", () => {
     vi.spyOn(jwt, "sign").mockRejectedValueOnce(new Error());
     const promise = sut.encrypt("any_id");
     await expect(promise).rejects.toThrow();
+  });
+
+  test("should call verify with correct values", async () => {
+    const sut = makeSut();
+    const verifySpy = vi.spyOn(jwt, "verify");
+    await sut.decrypt("any_token");
+    expect(verifySpy).toHaveBeenCalledWith("any_token", "secret");
   });
 });
