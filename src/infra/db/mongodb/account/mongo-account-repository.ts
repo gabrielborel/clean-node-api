@@ -5,12 +5,14 @@ import { UpdateAccessTokenRepository } from "../../../../data/protocols/db/accou
 import { AccountModel } from "../../../../domain/models/account";
 import { CreateAccountModel } from "../../../../domain/use-cases/create-account";
 import { MongoHelper } from "../helpers/mongo-helper";
+import { FindAccountByAccessTokenRepository } from "../../../../data/protocols/db/account/find-account-by-access-token-repository";
 
 export class MongoAccountRepository
   implements
     CreateAccountRepository,
     FindAccountByEmailRepository,
-    UpdateAccessTokenRepository
+    UpdateAccessTokenRepository,
+    FindAccountByAccessTokenRepository
 {
   async create(account: CreateAccountModel): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection("accounts");
@@ -41,5 +43,18 @@ export class MongoAccountRepository
         },
       }
     );
+  }
+
+  async findByAccessToken(
+    token: string,
+    role?: string | undefined
+  ): Promise<AccountModel | null> {
+    const accountCollection = await MongoHelper.getCollection("accounts");
+    const account = await accountCollection.findOne({
+      accessToken: token,
+      role,
+    });
+    if (!account) return null;
+    return MongoHelper.toDomain<AccountModel>(account);
   }
 }
