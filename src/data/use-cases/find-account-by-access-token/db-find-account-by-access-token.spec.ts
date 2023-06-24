@@ -82,4 +82,14 @@ describe("DbFindAccountByAccessToken Use Case", () => {
     await sut.find("any_token", "any_role");
     expect(findAccountByTokenSpy).toHaveBeenCalledWith("any_token", "any_role");
   });
+
+  test("should return null if FindAccountByTokenRepository returns null", async () => {
+    const { sut, findAccountByAccessTokenRepositoryStub } = makeSut();
+    vi.spyOn(
+      findAccountByAccessTokenRepositoryStub,
+      "findByAccessToken"
+    ).mockReturnValueOnce(new Promise((resolve) => resolve(null)));
+    const account = await sut.find("any_token");
+    expect(account).toBeNull();
+  });
 });
