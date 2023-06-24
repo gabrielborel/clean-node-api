@@ -52,7 +52,7 @@ export class MongoAccountRepository
     const accountCollection = await MongoHelper.getCollection("accounts");
     const account = await accountCollection.findOne({
       accessToken: token,
-      role,
+      $or: [{ role }, { role: "admin" }],
     });
     if (!account) return null;
     return MongoHelper.toDomain<AccountModel>(account);
