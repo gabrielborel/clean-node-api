@@ -1,26 +1,18 @@
 import { Router } from "express";
+import { Collection } from "mongodb";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import request from "supertest";
+import { afterAll, beforeAll, beforeEach, describe, test } from "vitest";
+import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper";
 import { adaptRoute } from "../adapters/express-route-adapter";
-import { makeSignUpController } from "../factories/controllers/signup/signup-controller-factory";
+import { app } from "../config/app";
 import { makeSignInController } from "../factories/controllers/signin/signin-controller-factory";
+import { makeSignUpController } from "../factories/controllers/signup/signup-controller-factory";
 
 export default (router: Router) => {
   router.post("/signup", adaptRoute(makeSignUpController()));
   router.post("/signin", adaptRoute(makeSignInController()));
 };
-import request from "supertest";
-import { app } from "../config/app";
-import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper";
-import {
-  test,
-  describe,
-  expect,
-  beforeAll,
-  beforeEach,
-  afterAll,
-} from "vitest";
-import { MongoMemoryServer } from "mongodb-memory-server";
-import { Collection } from "mongodb";
-import { hash } from "bcrypt";
 
 const timeout = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
