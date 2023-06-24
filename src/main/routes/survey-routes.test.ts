@@ -8,6 +8,8 @@ import { adaptRoute } from "../adapters/express-route-adapter";
 import { app } from "../config/app";
 import { makeSignInController } from "../factories/controllers/signin/signin-controller-factory";
 import { makeSignUpController } from "../factories/controllers/signup/signup-controller-factory";
+import { sign } from "jsonwebtoken";
+import { environment } from "../config/env";
 
 export default (router: Router) => {
   router.post("/signup", adaptRoute(makeSignUpController()));
@@ -18,6 +20,7 @@ const timeout = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 let surveyCollection: Collection;
+let accountCollection: Collection;
 
 describe("Survey Routes", async () => {
   beforeAll(async () => {
@@ -32,6 +35,8 @@ describe("Survey Routes", async () => {
   beforeEach(async () => {
     surveyCollection = await MongoHelper.getCollection("surveys");
     await surveyCollection.deleteMany({});
+    accountCollection = await MongoHelper.getCollection("accounts");
+    await accountCollection.deleteMany({});
   });
 
   describe("POST /surveys", () => {
@@ -56,6 +61,42 @@ describe("Survey Routes", async () => {
           ],
         })
         .expect(403);
+    });
+
+    test("should return 204 on create survey with valid accessToken", async () => {
+      const res = await accountCollection.insertOne({
+        name: "Any Name",
+        email: "any_email@mail.com",
+        password: "123",
+        role: "admin",
+      });
+      const accessToken = sign({ id: res.insertedId }, environment.jwtSecret);
+      await accountCollection.updateOne(
+        {
+          _id: res.insertedId,
+        },
+        {
+          $set: {
+            accessToken,
+          },
+        }
+      );
+      await request(app)
+        .post("/api/surveys")
+        .set("x-access-token", accessToken)
+        .send({
+          question: "Any Question",
+          answers: [
+            {
+              image: "http://image-name.com",
+              answer: "Answer 1",
+            },
+            {
+              answer: "Answer 2",
+            },
+          ],
+        })
+        .expect(204);
     });
   });
 });
