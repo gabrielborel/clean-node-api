@@ -35,7 +35,7 @@ describe("Survey Routes", async () => {
   });
 
   describe("POST /surveys", () => {
-    test("should return 204 on create survey success", async () => {
+    test("should return 403 on create survey without accessToken", async () => {
       /**
        * IDK why but this timeout is necessary, if not, the test will return 404
        * like the application hasn't build yet and the test make the request
@@ -55,7 +55,7 @@ describe("Survey Routes", async () => {
             },
           ],
         })
-        .expect(204);
+        .expect(403);
     });
   });
 });
