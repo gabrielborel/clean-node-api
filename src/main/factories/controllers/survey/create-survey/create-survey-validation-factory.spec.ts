@@ -1,11 +1,11 @@
 import {
   RequiredFieldValidation,
   ValidationComposite,
-} from "../../../../validation/validators";
+} from "../../../../../validation/validators";
 import { makeCreateSurveyValidation } from "./create-survey-validation-factory";
 import { test, describe, vi, expect } from "vitest";
 
-vi.mock("../../../../validation/validators/validation-composite");
+vi.mock("../../../../../validation/validators/validation-composite");
 
 describe("CreateSurveyValidation Factory", () => {
   test("should call ValidationComposite with all validations", () => {
