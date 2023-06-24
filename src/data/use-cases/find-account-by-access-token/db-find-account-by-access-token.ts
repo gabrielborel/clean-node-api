@@ -16,10 +16,13 @@ export class DbFindAccountByAccessToken implements FindAccountByAccessToken {
     const decryptedAccessToken = await this.decrypter.decrypt(accessToken);
     if (!decryptedAccessToken) return null;
 
-    await this.findAccountByAccessTokenRepository.findByAccessToken(
-      accessToken,
-      role
-    );
-    return null;
+    const account =
+      await this.findAccountByAccessTokenRepository.findByAccessToken(
+        accessToken,
+        role
+      );
+    if (!account) return null;
+
+    return account;
   }
 }

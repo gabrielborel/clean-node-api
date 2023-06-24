@@ -92,4 +92,10 @@ describe("DbFindAccountByAccessToken Use Case", () => {
     const account = await sut.find("any_token");
     expect(account).toBeNull();
   });
+
+  test("should return an account on success", async () => {
+    const { sut } = makeSut();
+    const account = await sut.find("any_token");
+    expect(account).toEqual(makeFakeAccount());
+  });
 });
