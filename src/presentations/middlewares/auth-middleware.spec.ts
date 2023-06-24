@@ -62,4 +62,14 @@ describe("Auth Middleware", () => {
     await sut.handle(httpRequest);
     expect(findAccountByAccessTokenSpy).toHaveBeenCalledWith("any_token");
   });
+
+  test("should return 403 if FindAccountByAccessToken returns null", async () => {
+    const { sut, findAccountByAccessTokenStub } = makeSut();
+    vi.spyOn(findAccountByAccessTokenStub, "find").mockReturnValueOnce(
+      new Promise((resolve) => resolve(null))
+    );
+    const httpRequest = makeFakeRequest();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(forbidden(new AccessDeniedError()));
+  });
 });
