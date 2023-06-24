@@ -17,7 +17,7 @@ const makeSut = (): MongoSurveyRepository => {
 
 let surveyCollection: Collection;
 
-describe.only("MongoDB Survey Repository", () => {
+describe("MongoDB Survey Repository", () => {
   beforeAll(async () => {
     const mongo = await MongoMemoryServer.create();
     const uri = mongo.getUri();
