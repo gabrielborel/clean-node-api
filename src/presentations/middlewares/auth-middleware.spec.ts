@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import { HttpRequest } from "../protocols/http";
 import { AccessDeniedError } from "../errors";
-import { forbidden, ok } from "../helpers/http/http-helper";
+import { forbidden, ok, serverError } from "../helpers/http/http-helper";
 import { AuthMiddleware } from "./auth-middleware";
 import { FindAccountByAccessToken } from "../../domain/use-cases/find-account-by-access-token";
 import { AccountModel } from "../../domain/models/account";
@@ -77,8 +77,20 @@ describe("Auth Middleware", () => {
     const { sut } = makeSut();
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
-    expect(httpResponse).toEqual(ok({
-      accountId: "valid_id",
-    }));
+    expect(httpResponse).toEqual(
+      ok({
+        accountId: "valid_id",
+      })
+    );
+  });
+
+  test("should return 500 if FindAccountByAccessToken throws", async () => {
+    const { sut, findAccountByAccessTokenStub } = makeSut();
+    vi.spyOn(findAccountByAccessTokenStub, "find").mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error()))
+    );
+    const httpRequest = makeFakeRequest();
+    const httpResponse = await sut.handle(httpRequest);
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
