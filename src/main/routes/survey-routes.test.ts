@@ -97,5 +97,31 @@ describe("Survey Routes", async () => {
       await timeout(600);
       await request(app).get("/api/surveys").expect(403);
     });
+
+    test("should return 204 on load surveys with valid accessToken, but no surveys found", async () => {
+      const res = await accountCollection.insertOne({
+        name: "Any Name",
+        email: "any_email@mail.com",
+        password: "123",
+      });
+
+      const accessToken = sign({ id: res.insertedId }, environment.jwtSecret);
+      await accountCollection.updateOne(
+        {
+          _id: res.insertedId,
+        },
+        {
+          $set: {
+            accessToken,
+          },
+        }
+      );
+      await timeout(300);
+      await request(app)
+        .get("/api/surveys")
+        .set("x-access-token", accessToken)
+        .send()
+        .expect(204);
+    });
   });
 });
