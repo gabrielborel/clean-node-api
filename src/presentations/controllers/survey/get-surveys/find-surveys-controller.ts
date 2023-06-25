@@ -10,7 +10,7 @@ export class FindSurveysController implements Controller {
   constructor(private readonly findSurveys: FindSurveys) {}
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
-    await this.findSurveys.find();
-    return ok({});
+    const surveys = await this.findSurveys.find();
+    return ok(surveys);
   }
 }
