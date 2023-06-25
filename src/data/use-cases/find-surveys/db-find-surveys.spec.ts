@@ -52,7 +52,7 @@ const makeSut = (): SutType => {
 };
 
 describe("DbFindSurveys Use Case", () => {
-  test("should call LoadSurveysRepository", async () => {
+  test("should call FindSurveysRepository", async () => {
     const { sut, findSurveysRepositoryStub } = makeSut();
     const findAllSpy = vi.spyOn(findSurveysRepositoryStub, "findAll");
     await sut.find();
@@ -63,5 +63,14 @@ describe("DbFindSurveys Use Case", () => {
     const { sut } = makeSut();
     const surveys = await sut.find();
     expect(surveys).toEqual(makeFakeSurveys());
+  });
+
+  test("should throw if FindSurveysRepository throws", async () => {
+    const { sut, findSurveysRepositoryStub } = makeSut();
+    vi.spyOn(findSurveysRepositoryStub, "findAll").mockRejectedValueOnce(
+      new Error()
+    );
+    const promise = sut.find();
+    await expect(promise).rejects.toThrow();
   });
 });
