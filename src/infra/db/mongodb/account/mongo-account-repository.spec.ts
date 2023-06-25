@@ -14,7 +14,7 @@ const makeSut = (): MongoAccountRepository => {
   return new MongoAccountRepository();
 };
 
-describe.only("MongoDB Account Repository", () => {
+describe("MongoDB Account Repository", () => {
   beforeAll(async () => {
     const mongo = await MongoMemoryServer.create();
     const uri = mongo.getUri();

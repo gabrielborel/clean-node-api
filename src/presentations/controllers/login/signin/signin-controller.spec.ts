@@ -87,7 +87,6 @@ describe("SignIn Controller", () => {
 
   test("should return 200 if valid credentials are provided", async () => {
     const { sut } = makeSut();
-    console.log(sut);
     const request = makeFakeRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(ok({ accessToken: "access_token" }));
