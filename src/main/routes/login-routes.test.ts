@@ -39,7 +39,7 @@ describe("Login Routes", async () => {
        * IDK why but this timeout is necessary, if not, the test will return 404
        * like the application hasn't build yet and the test make the request
        */
-      await timeout(300);
+      await timeout(400);
       const response = await request(app).post("/api/signup").send({
         name: "Any Name",
         email: "any_email@mail.com",

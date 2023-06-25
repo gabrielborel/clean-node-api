@@ -123,5 +123,42 @@ describe("Survey Routes", async () => {
         .send()
         .expect(204);
     });
+
+    test("should return 200 on load surveys with valid accessToken", async () => {
+      const res = await accountCollection.insertOne({
+        name: "Any Name",
+        email: "any_email@mail.com",
+        password: "123",
+      });
+      const accessToken = sign({ id: res.insertedId }, environment.jwtSecret);
+      await accountCollection.updateOne(
+        {
+          _id: res.insertedId,
+        },
+        {
+          $set: {
+            accessToken,
+          },
+        }
+      );
+      await surveyCollection.insertMany([
+        {
+          question: "any_question",
+          answers: [
+            {
+              image: "any_image",
+              answer: "any_answer",
+            },
+          ],
+          date: new Date(),
+        },
+      ]);
+      await timeout(300);
+      await request(app)
+        .get("/api/surveys")
+        .set("x-access-token", accessToken)
+        .send()
+        .expect(200);
+    });
   });
 });
