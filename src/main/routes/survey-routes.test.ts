@@ -7,6 +7,27 @@ import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper";
 import { app } from "../config/app";
 import { environment } from "../config/env";
 
+const makeAccessToken = async (): Promise<string> => {
+  const res = await accountCollection.insertOne({
+    name: "Any Name",
+    email: "any_email@mail.com",
+    password: "123",
+  });
+
+  const accessToken = sign({ id: res.insertedId }, environment.jwtSecret);
+  await accountCollection.updateOne(
+    {
+      _id: res.insertedId,
+    },
+    {
+      $set: {
+        accessToken,
+      },
+    }
+  );
+  return accessToken;
+};
+
 const timeout = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -55,23 +76,7 @@ describe("Survey Routes", async () => {
     });
 
     test("should return 204 on create survey with valid accessToken", async () => {
-      const res = await accountCollection.insertOne({
-        name: "Any Name",
-        email: "any_email@mail.com",
-        password: "123",
-        role: "admin",
-      });
-      const accessToken = sign({ id: res.insertedId }, environment.jwtSecret);
-      await accountCollection.updateOne(
-        {
-          _id: res.insertedId,
-        },
-        {
-          $set: {
-            accessToken,
-          },
-        }
-      );
+      const accessToken = await makeAccessToken();
       await timeout(300);
       await request(app)
         .post("/api/surveys")
@@ -99,23 +104,7 @@ describe("Survey Routes", async () => {
     });
 
     test("should return 204 on load surveys with valid accessToken, but no surveys found", async () => {
-      const res = await accountCollection.insertOne({
-        name: "Any Name",
-        email: "any_email@mail.com",
-        password: "123",
-      });
-
-      const accessToken = sign({ id: res.insertedId }, environment.jwtSecret);
-      await accountCollection.updateOne(
-        {
-          _id: res.insertedId,
-        },
-        {
-          $set: {
-            accessToken,
-          },
-        }
-      );
+      const accessToken = await makeAccessToken();
       await timeout(300);
       await request(app)
         .get("/api/surveys")
@@ -125,22 +114,7 @@ describe("Survey Routes", async () => {
     });
 
     test("should return 200 on load surveys with valid accessToken", async () => {
-      const res = await accountCollection.insertOne({
-        name: "Any Name",
-        email: "any_email@mail.com",
-        password: "123",
-      });
-      const accessToken = sign({ id: res.insertedId }, environment.jwtSecret);
-      await accountCollection.updateOne(
-        {
-          _id: res.insertedId,
-        },
-        {
-          $set: {
-            accessToken,
-          },
-        }
-      );
+      const accessToken = await makeAccessToken();
       await surveyCollection.insertMany([
         {
           question: "any_question",
