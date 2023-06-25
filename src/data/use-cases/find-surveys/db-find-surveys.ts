@@ -6,7 +6,6 @@ export class DbFindSurveys implements FindSurveys {
   constructor(private readonly findSurveysRepository: FindSurveysRepository) {}
 
   async find(): Promise<SurveyModel[]> {
-    await this.findSurveysRepository.findAll();
-    return [];
+    return await this.findSurveysRepository.findAll();
   }
 }
