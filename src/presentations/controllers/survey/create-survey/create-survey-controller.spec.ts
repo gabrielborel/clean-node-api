@@ -1,4 +1,4 @@
-import { describe, test, vi, expect } from "vitest";
+import { describe, test, vi, expect, beforeAll, afterAll } from "vitest";
 import {
   CreateSurvey,
   CreateSurveyModel,
@@ -39,6 +39,7 @@ const makeFakeRequest = (): HttpRequest => ({
         answer: "any_answer",
       },
     ],
+    date: new Date(),
   },
 });
 
@@ -56,6 +57,14 @@ const makeSut = (): SutType => {
 };
 
 describe("CreateSurveyController", () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.clearAllTimers();
+  });
+
   test("should call Validation with correct values", async () => {
     const { sut, validationStub } = makeSut();
     const request = makeFakeRequest();

@@ -1,4 +1,4 @@
-import { describe, test, vi, expect } from "vitest";
+import { describe, test, vi, expect, beforeAll, afterAll } from "vitest";
 import { DbCreateSurvey } from "./db-create-survey";
 import {
   CreateSurveyModel,
@@ -22,6 +22,7 @@ const makeFakeSurveyData = (): CreateSurveyModel => ({
       answer: "any_answer",
     },
   ],
+  date: new Date(),
 });
 
 interface SutType {
@@ -36,6 +37,14 @@ const makeSut = (): SutType => {
 };
 
 describe("DbCreateSurvey Use Case", () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.clearAllTimers();
+  });
+
   test("should call CreateSurveyRepository with correct values", async () => {
     const { sut, createSurveyRepositoryStub } = makeSut();
     const createSpy = vi.spyOn(createSurveyRepositoryStub, "create");
