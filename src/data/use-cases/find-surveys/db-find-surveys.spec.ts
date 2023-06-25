@@ -4,10 +4,37 @@ import { FindSurveysRepository } from "../../protocols/db/survey/find-surveys-re
 import { FindSurveys } from "../../../domain/use-cases/find-surveys";
 import { DbFindSurveys } from "./db-find-surveys";
 
+const makeFakeSurveys = (): SurveyModel[] => {
+  return [
+    {
+      id: "any_id",
+      question: "any_question",
+      answers: [
+        {
+          image: "any_image",
+          answer: "any_answer",
+        },
+      ],
+      date: new Date(),
+    },
+    {
+      id: "any_id_2",
+      question: "any_question_2",
+      answers: [
+        {
+          image: "any_image_2",
+          answer: "any_answer_2",
+        },
+      ],
+      date: new Date(),
+    },
+  ];
+};
+
 const makeFindSurveysRepositoryStub = (): FindSurveysRepository => {
   class FindSurveysRepositoryStub implements FindSurveysRepository {
     async findAll(): Promise<SurveyModel[]> {
-      return Promise.resolve([]);
+      return Promise.resolve(makeFakeSurveys());
     }
   }
   return new FindSurveysRepositoryStub();
@@ -30,5 +57,11 @@ describe("DbFindSurveys Use Case", () => {
     const findAllSpy = vi.spyOn(findSurveysRepositoryStub, "findAll");
     await sut.find();
     expect(findAllSpy).toHaveBeenCalled();
+  });
+
+  test("should return a list of surveys on success", async () => {
+    const { sut } = makeSut();
+    const surveys = await sut.find();
+    expect(surveys).toEqual(makeFakeSurveys());
   });
 });
