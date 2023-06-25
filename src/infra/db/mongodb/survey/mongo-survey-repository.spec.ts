@@ -51,4 +51,40 @@ describe("MongoDB Survey Repository", () => {
     const survey = await surveyCollection.findOne({ question: "any_question" });
     expect(survey).toBeTruthy();
   });
+
+  test("should return an array of surveys on success", async () => {
+    const sut = makeSut();
+    await surveyCollection.insertMany([
+      {
+        question: "any_question",
+        answers: [
+          {
+            image: "any_image",
+            answer: "any_answer",
+          },
+          {
+            answer: "other_answer",
+          },
+        ],
+        date: new Date(),
+      },
+      {
+        question: "other_question",
+        answers: [
+          {
+            image: "other_image",
+            answer: "other_answer",
+          },
+          {
+            answer: "other_answer",
+          },
+        ],
+        date: new Date(),
+      },
+    ]);
+    const surveys = await sut.findAll();
+    expect(surveys.length).toBe(2);
+    expect(surveys[0].question).toBe("any_question");
+    expect(surveys[1].question).toBe("other_question");
+  });
 });
