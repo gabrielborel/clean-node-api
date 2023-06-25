@@ -1,4 +1,4 @@
-import { ok, serverError } from "../../../helpers/http/http-helper";
+import { noContent, ok, serverError } from "../../../helpers/http/http-helper";
 import {
   Controller,
   FindSurveys,
@@ -12,6 +12,10 @@ export class FindSurveysController implements Controller {
   async handle(request: HttpRequest): Promise<HttpResponse> {
     try {
       const surveys = await this.findSurveys.find();
+      if (!surveys.length) {
+        return noContent();
+      }
+
       return ok(surveys);
     } catch (error) {
       return serverError(error as Error);
