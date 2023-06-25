@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { FindSurveysController } from "./find-surveys-controller";
 import { FindSurveys, SurveyModel } from "./find-surveys-controller-protocols";
+import { ok } from "../../../helpers/http/http-helper";
 
 const makeFakeSurveys = (): SurveyModel[] => {
   return [
@@ -63,5 +64,11 @@ describe("FindSurveysController", () => {
     const findSurveysSpy = vi.spyOn(findSurveysStub, "find");
     await sut.handle({});
     expect(findSurveysSpy).toHaveBeenCalled();
+  });
+
+  test("should return 200 on success", async () => {
+    const { sut } = makeSut();
+    const httpResponse = await sut.handle({});
+    expect(httpResponse).toEqual(ok(makeFakeSurveys()));
   });
 });
