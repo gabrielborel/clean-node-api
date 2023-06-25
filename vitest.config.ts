@@ -3,4 +3,9 @@ import tsConfigPaths from "vitest-tsconfig-paths";
 
 export default defineConfig({
   plugins: [tsConfigPaths()],
+  test: {
+    coverage: {
+      provider: "v8",
+    },
+  },
 });

@@ -36,7 +36,7 @@ describe("Survey Routes", async () => {
        * IDK why but this timeout is necessary, if not, the test will return 404
        * like the application hasn't build yet and the test make the request
        */
-      await timeout(200);
+      await timeout(600);
       await request(app)
         .post("/api/surveys")
         .send({
@@ -72,6 +72,7 @@ describe("Survey Routes", async () => {
           },
         }
       );
+      await timeout(300);
       await request(app)
         .post("/api/surveys")
         .set("x-access-token", accessToken)
