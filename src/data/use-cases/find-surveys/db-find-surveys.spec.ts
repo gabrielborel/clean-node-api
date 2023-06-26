@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyModel } from "../../../domain/models/survey";
 import { FindSurveysRepository } from "../../protocols/db/survey/find-surveys-repository";
 import { FindSurveys } from "../../../domain/use-cases/find-surveys";
@@ -52,6 +52,14 @@ const makeSut = (): SutType => {
 };
 
 describe("DbFindSurveys Use Case", () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.clearAllTimers();
+  });
+
   test("should call FindSurveysRepository", async () => {
     const { sut, findSurveysRepositoryStub } = makeSut();
     const findAllSpy = vi.spyOn(findSurveysRepositoryStub, "findAll");

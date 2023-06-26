@@ -7,13 +7,19 @@ import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper";
 import { app } from "../config/app";
 import { environment } from "../config/env";
 
+const timeout = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+let surveyCollection: Collection;
+let accountCollection: Collection;
+
 const makeAccessToken = async (): Promise<string> => {
   const res = await accountCollection.insertOne({
     name: "Any Name",
     email: "any_email@mail.com",
     password: "123",
+    role: "admin",
   });
-
   const accessToken = sign({ id: res.insertedId }, environment.jwtSecret);
   await accountCollection.updateOne(
     {
@@ -27,12 +33,6 @@ const makeAccessToken = async (): Promise<string> => {
   );
   return accessToken;
 };
-
-const timeout = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-let surveyCollection: Collection;
-let accountCollection: Collection;
 
 describe("Survey Routes", async () => {
   beforeAll(async () => {
