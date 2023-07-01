@@ -1,5 +1,5 @@
-import { MissingParamError } from "../../presentations/errors";
-import { Validation } from "../../presentations/protocols/validation";
+import { MissingParamError } from "@/presentations/errors";
+import { Validation } from "@/presentations/protocols/validation";
 import { ValidationComposite } from "./validation-composite";
 import { test, describe, vi, expect } from "vitest";
 

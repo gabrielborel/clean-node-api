@@ -1,14 +1,11 @@
-import { LogErrorRepository } from "../../data/protocols/db/log/log-error-repository";
+import { LogErrorRepository } from "@/data/protocols/db/log/log-error-repository";
 import { AccountModel } from "../../domain/models/account";
-import {
-  created,
-  serverError,
-} from "../../presentations/helpers/http/http-helper";
+import { created, serverError } from "@/presentations/helpers/http/http-helper";
 import {
   Controller,
   HttpRequest,
   HttpResponse,
-} from "../../presentations/protocols";
+} from "@/presentations/protocols";
 import { LogControllerDecorator } from "./log-controller-decorator";
 import { test, describe, vi, expect } from "vitest";
 

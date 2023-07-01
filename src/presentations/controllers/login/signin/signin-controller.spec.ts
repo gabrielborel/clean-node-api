@@ -1,18 +1,18 @@
 import { test, describe, vi, expect } from "vitest";
-import { InvalidParamError, ServerError } from "../../../errors";
+import { InvalidParamError, ServerError } from "@/presentations/errors";
 import {
   HttpRequest,
   Authentication,
   AuthenticationModel,
 } from "./signin-controller-protocols";
 import { SignInController } from "./signin-controller";
-import { Validation } from "../../../protocols/validation";
+import { Validation } from "@/presentations/protocols/validation";
 import {
   badRequest,
   serverError,
   unauthorized,
   ok,
-} from "../../../helpers/http/http-helper";
+} from "@/presentations/helpers/http/http-helper";
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {

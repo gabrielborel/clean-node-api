@@ -1,7 +1,7 @@
 import {
   RequiredFieldValidation,
   ValidationComposite,
-} from "../../../../../validation/validators";
+} from "@/validation/validators";
 import { makeCreateSurveyValidation } from "./create-survey-validation-factory";
 import { test, describe, vi, expect } from "vitest";
 

@@ -1,9 +1,9 @@
-import { EmailValidator } from "../../../../validation/protocols/email-validator";
+import { EmailValidator } from "@/validation/protocols/email-validator";
 import {
   EmailValidation,
   RequiredFieldValidation,
   ValidationComposite,
-} from "../../../../validation/validators";
+} from "@/validation/validators";
 import { makeSignInValidation } from "./signin-validation-factory";
 import { test, describe, vi, expect } from "vitest";
 

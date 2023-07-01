@@ -3,9 +3,9 @@ import { Collection } from "mongodb";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
 import { afterAll, beforeAll, beforeEach, describe, test } from "vitest";
-import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper";
-import { app } from "../config/app";
-import { environment } from "../config/env";
+import { MongoHelper } from "@/infra/db/mongodb/helpers/mongo-helper";
+import { app } from "@/main/config/app";
+import { environment } from "@/main/config/env";
 
 const timeout = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
