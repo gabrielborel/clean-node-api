@@ -12,10 +12,10 @@ const makeValidation = (): Validation => {
   return new ValidationStub();
 };
 
-interface SutType {
+type SutType = {
   sut: ValidationComposite;
   validationStubs: Validation[];
-}
+};
 
 const makeSut = (): SutType => {
   const validationStubs = [makeValidation(), makeValidation()];

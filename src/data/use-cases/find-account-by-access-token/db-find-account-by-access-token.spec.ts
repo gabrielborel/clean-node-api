@@ -36,11 +36,11 @@ const makeFindAccountByRepositoryStub =
     return new FindAccountByAccessTokenRepositoryStub();
   };
 
-interface SutType {
+type SutType = {
   sut: DbFindAccountByAccessToken;
   decrypterStub: Decrypter;
   findAccountByAccessTokenRepositoryStub: FindAccountByAccessTokenRepository;
-}
+};
 
 const makeSut = (): SutType => {
   const decrypter = makeDecrypterStub();

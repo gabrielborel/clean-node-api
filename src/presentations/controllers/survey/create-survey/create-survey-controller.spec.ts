@@ -43,11 +43,11 @@ const makeFakeRequest = (): HttpRequest => ({
   },
 });
 
-interface SutType {
+type SutType = {
   sut: CreateSurveyController;
   validationStub: Validation;
   createSurveyStub: CreateSurvey;
-}
+};
 
 const makeSut = (): SutType => {
   const validationStub = makeValidationStub();

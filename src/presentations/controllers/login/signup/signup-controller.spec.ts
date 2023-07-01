@@ -66,12 +66,12 @@ const makeFakeAccount = (): AccountModel => ({
   accessToken: "valid_token",
 });
 
-interface SutType {
+type SutType = {
   sut: SignUpController;
   createAccountStub: CreateAccount;
   validationStub: Validation;
   authenticationStub: Authentication;
-}
+};
 
 const makeSut = (): SutType => {
   const createAccount = makeCreateAccount();

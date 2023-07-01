@@ -40,10 +40,10 @@ const makeFindSurveysRepositoryStub = (): FindSurveysRepository => {
   return new FindSurveysRepositoryStub();
 };
 
-interface SutType {
+type SutType = {
   sut: FindSurveys;
   findSurveysRepositoryStub: FindSurveysRepository;
-}
+};
 
 const makeSut = (): SutType => {
   const findSurveysRepository = makeFindSurveysRepositoryStub();

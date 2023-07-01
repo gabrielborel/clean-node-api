@@ -52,12 +52,12 @@ const makeFakeAccountData = (): CreateAccountModel => ({
   password: "valid_password",
 });
 
-interface SutType {
+type SutType = {
   sut: DbCreateAccount;
   hasherStub: Hasher;
   createAccountRepositoryStub: CreateAccountRepository;
   findAccountByEmailRepositoryStub: FindAccountByEmailRepository;
-}
+};
 
 const makeSut = (): SutType => {
   const hasherStub = makeHasher();
