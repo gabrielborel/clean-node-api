@@ -7,7 +7,7 @@ import {
 import { makeSignUpValidation } from "./signup-validation-factory";
 import { test, describe, vi, expect } from "vitest";
 
-vi.mock("../../../../validation/validators/validation-composite");
+vi.mock("@/validation/validators/validation-composite");
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
