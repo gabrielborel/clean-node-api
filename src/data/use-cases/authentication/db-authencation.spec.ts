@@ -60,13 +60,13 @@ const makeFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
   return new FindAccountByEmailRepositoryStub();
 };
 
-interface SutType {
+type SutType = {
   sut: DbAuthentication;
   findAccountByEmailRepositoryStub: FindAccountByEmailRepository;
   hashComparerStub: HashComparer;
   encrypterStub: Encrypter;
   updateAccessTokenRepositoryStub: UpdateAccessTokenRepository;
-}
+};
 
 const makeSut = (): SutType => {
   const hashComparer = makeHashComparer();

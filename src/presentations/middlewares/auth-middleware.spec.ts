@@ -34,10 +34,10 @@ const makeFakeRequest = (): HttpRequest => ({
   },
 });
 
-interface SutType {
+type SutType = {
   sut: AuthMiddleware;
   findAccountByAccessTokenStub: FindAccountByAccessToken;
-}
+};
 
 const makeSut = (role?: string): SutType => {
   const findAccountByAccessToken = makeFindAccountByAccessTokenStub();
