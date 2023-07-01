@@ -19,6 +19,8 @@ services:
       - "3333:3333"
       - "9222:9222"
     command: bash -c "npm install --omit=dev && npm run debug"
+    environment:
+      - MONGO_URL=mongodb://database:27017/clean-node-api
     volumes:
       - ./dist/:/usr/src/app/dist/
       - ./package.json:/usr/src/app/package.json
