@@ -1,6 +1,6 @@
 {
   "name": "ts-tdd-api",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An API to practice TDD, Clean Architecture and SOLID principles using TypeScript",
   "main": "index.js",
   "scripts": {
