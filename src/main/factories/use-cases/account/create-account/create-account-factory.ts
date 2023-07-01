@@ -1,6 +1,6 @@
-import { DbCreateAccount } from "../../../../../data/use-cases/create-account/db-create-account";
-import { BcryptAdapter } from "../../../../../infra/criptography/bcrypt/bcrypt-adapter";
-import { MongoAccountRepository } from "../../../../../infra/db/mongodb/account/mongo-account-repository";
+import { DbCreateAccount } from "@/data/use-cases/create-account/db-create-account";
+import { BcryptAdapter } from "@/infra/criptography/bcrypt/bcrypt-adapter";
+import { MongoAccountRepository } from "@/infra/db/mongodb/account/mongo-account-repository";
 
 export const makeDbCreateAccount = (): DbCreateAccount => {
   const SALT = 12;

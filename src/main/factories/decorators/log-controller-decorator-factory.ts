@@ -1,6 +1,6 @@
-import { MongoLogRepository } from "../../../infra/db/mongodb/log/mongo-log-repository";
-import { Controller } from "../../../presentations/protocols";
-import { LogControllerDecorator } from "../../decorators/log-controller-decorator";
+import { MongoLogRepository } from "@/infra/db/mongodb/log/mongo-log-repository";
+import { Controller } from "@/presentations/protocols";
+import { LogControllerDecorator } from "@/main/decorators/log-controller-decorator";
 
 export const makeLogControllerDecorator = (
   controller: Controller

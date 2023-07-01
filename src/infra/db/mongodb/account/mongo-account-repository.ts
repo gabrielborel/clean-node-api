@@ -1,11 +1,11 @@
 import { ObjectId } from "mongodb";
-import { CreateAccountRepository } from "../../../../data/protocols/db/account/create-account-repository";
-import { FindAccountByEmailRepository } from "../../../../data/protocols/db/account/find-account-by-email-repository";
-import { UpdateAccessTokenRepository } from "../../../../data/protocols/db/account/update-access-token-repository";
-import { AccountModel } from "../../../../domain/models/account";
-import { CreateAccountModel } from "../../../../domain/use-cases/create-account";
+import { CreateAccountRepository } from "@/data/protocols/db/account/create-account-repository";
+import { FindAccountByEmailRepository } from "@/data/protocols/db/account/find-account-by-email-repository";
+import { UpdateAccessTokenRepository } from "@/data/protocols/db/account/update-access-token-repository";
+import { AccountModel } from "@/domain/models/account";
+import { CreateAccountModel } from "@/domain/use-cases/create-account";
 import { MongoHelper } from "../helpers/mongo-helper";
-import { FindAccountByAccessTokenRepository } from "../../../../data/protocols/db/account/find-account-by-access-token-repository";
+import { FindAccountByAccessTokenRepository } from "@/data/protocols/db/account/find-account-by-access-token-repository";
 
 export class MongoAccountRepository
   implements

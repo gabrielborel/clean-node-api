@@ -1,8 +1,8 @@
 import {
+  CreateSurveyRepository,
   CreateSurvey,
   CreateSurveyModel,
-} from "../../../domain/use-cases/create-survey";
-import { CreateSurveyRepository } from "./db-create-survey-protocols";
+} from "./db-create-survey-protocols";
 
 export class DbCreateSurvey implements CreateSurvey {
   constructor(

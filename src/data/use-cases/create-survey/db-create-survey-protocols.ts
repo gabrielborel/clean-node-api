@@ -1,2 +1,2 @@
-export * from "../../../domain/use-cases/create-survey";
-export * from "../../protocols/db/survey/create-survey-repository";
+export * from "@/domain/use-cases/create-survey";
+export * from "@/data/protocols/db/survey/create-survey-repository";
