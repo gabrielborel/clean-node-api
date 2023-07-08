@@ -60,4 +60,10 @@ describe("DbFindSurveyById Use Case", () => {
     const promise = sut.findById("any_id");
     await expect(promise).rejects.toThrow();
   });
+
+  test("should return a survey on success", async () => {
+    const { sut } = makeSut();
+    const survey = await sut.findById("any_id");
+    expect(survey).toEqual(makeFakeSurvey());
+  });
 });
