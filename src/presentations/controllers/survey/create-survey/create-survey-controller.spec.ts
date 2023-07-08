@@ -3,14 +3,12 @@ import {
   CreateSurvey,
   CreateSurveyModel,
   HttpRequest,
-} from "./create-survey-controller-protocols";
-import { CreateSurveyController } from "./create-survey-controller";
-import { Validation } from "../../../protocols/validation";
-import {
   badRequest,
   noContent,
   serverError,
-} from "../../../helpers/http/http-helper";
+  Validation,
+} from "./create-survey-controller-protocols";
+import { CreateSurveyController } from "./create-survey-controller";
 
 const makeValidationStub = (): Validation => {
   class ValidationStub implements Validation {

@@ -1,15 +1,14 @@
 import {
   badRequest,
   noContent,
-  ok,
   serverError,
 } from "../../../helpers/http/http-helper";
 import { Validation } from "../../../protocols/validation";
 import {
-  HttpRequest,
   Controller,
-  HttpResponse,
   CreateSurvey,
+  HttpRequest,
+  HttpResponse,
 } from "./create-survey-controller-protocols";
 
 export class CreateSurveyController implements Controller {
