@@ -14,11 +14,17 @@ export class SaveSurveyResultController implements Controller {
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
     try {
-      const { surveyId } = request.params;
+      const { surveyId, answer } = request.params;
 
       const survey = await this.findSurveyById.findById(surveyId);
       if (!survey) {
         return forbidden(new InvalidParamError("surveyId"));
+      }
+
+      const surveyAnswers = survey.answers.map((a) => a.answer);
+      const invalidAnswer = !surveyAnswers.includes(answer);
+      if (invalidAnswer) {
+        return forbidden(new InvalidParamError("answer"));
       }
 
       return ok(survey);
