@@ -5,6 +5,7 @@ import {
   HttpRequest,
   SurveyModel,
   forbidden,
+  serverError,
 } from "./save-survey-result-protocols";
 import { InvalidParamError } from "@/presentations/errors";
 
@@ -67,5 +68,12 @@ describe("SaveSurveyResultController", () => {
     vi.spyOn(findSurveyByIdStub, "findById").mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(makeFakeRequest());
     expect(httpResponse).toEqual(forbidden(new InvalidParamError("surveyId")));
+  });
+
+  test("should return 500 if FindSurveyById throws", async () => {
+    const { sut, findSurveyByIdStub } = makeSut();
+    vi.spyOn(findSurveyByIdStub, "findById").mockRejectedValueOnce(new Error());
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(serverError(new Error()));
   });
 });
