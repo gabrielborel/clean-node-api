@@ -3,11 +3,14 @@ import { SaveSurveyResultController } from "./save-survey-result-controller";
 import {
   FindSurveyById,
   HttpRequest,
+  SaveSurveyResult,
+  SaveSurveyResultModel,
   SurveyModel,
   forbidden,
   serverError,
+  SurveyResultModel,
+  InvalidParamError,
 } from "./save-survey-result-protocols";
-import { InvalidParamError } from "@/presentations/errors";
 
 const makeFakeSurvey = (): SurveyModel => ({
   id: "any_survey_id",
@@ -21,6 +24,14 @@ const makeFakeSurvey = (): SurveyModel => ({
   date: new Date(),
 });
 
+const makeFakeSurveyResult = (): SurveyResultModel => ({
+  id: "any_id",
+  surveyId: "any_survey_id",
+  accountId: "any_account_id",
+  answer: "any_answer",
+  date: new Date(),
+});
+
 const makeFindSurveyByIdStub = (): FindSurveyById => {
   class FindSurveyByIdStub implements FindSurveyById {
     async findById(id: string): Promise<SurveyModel | null> {
@@ -30,7 +41,17 @@ const makeFindSurveyByIdStub = (): FindSurveyById => {
   return new FindSurveyByIdStub();
 };
 
+const makeSaveSurveyResultStub = (): SaveSurveyResult => {
+  class SaveSurveyResultStub implements SaveSurveyResult {
+    save(data: SaveSurveyResultModel): Promise<SurveyResultModel> {
+      return Promise.resolve(makeFakeSurveyResult());
+    }
+  }
+  return new SaveSurveyResultStub();
+};
+
 const makeFakeRequest = (): HttpRequest => ({
+  accountId: "any_account_id",
   params: {
     surveyId: "any_survey_id",
   },
@@ -42,12 +63,18 @@ const makeFakeRequest = (): HttpRequest => ({
 type SutType = {
   sut: SaveSurveyResultController;
   findSurveyByIdStub: FindSurveyById;
+  saveSurveyResultStub: SaveSurveyResult;
 };
 
 const makeSut = (): SutType => {
   const findSurveyById = makeFindSurveyByIdStub();
-  const sut = new SaveSurveyResultController(findSurveyById);
-  return { sut, findSurveyByIdStub: findSurveyById };
+  const saveSurveyResult = makeSaveSurveyResultStub();
+  const sut = new SaveSurveyResultController(findSurveyById, saveSurveyResult);
+  return {
+    sut,
+    findSurveyByIdStub: findSurveyById,
+    saveSurveyResultStub: saveSurveyResult,
+  };
 };
 
 describe("SaveSurveyResultController", () => {
@@ -86,5 +113,18 @@ describe("SaveSurveyResultController", () => {
     httpRequest.body.answer = "wrong_answer";
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(forbidden(new InvalidParamError("answer")));
+  });
+
+  test("should call SaveSurveyResult with correct values", async () => {
+    const { sut, saveSurveyResultStub } = makeSut();
+    const httpRequest = makeFakeRequest();
+    const saveSpy = vi.spyOn(saveSurveyResultStub, "save");
+    await sut.handle(httpRequest);
+    expect(saveSpy).toHaveBeenCalledWith({
+      surveyId: "any_survey_id",
+      accountId: "any_account_id",
+      date: new Date(),
+      answer: "any_answer",
+    });
   });
 });
