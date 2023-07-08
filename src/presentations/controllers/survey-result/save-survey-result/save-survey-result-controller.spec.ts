@@ -4,7 +4,9 @@ import {
   FindSurveyById,
   HttpRequest,
   SurveyModel,
+  forbidden,
 } from "./save-survey-result-protocols";
+import { InvalidParamError } from "@/presentations/errors";
 
 const makeFakeSurvey = (): SurveyModel => ({
   id: "any_survey_id",
@@ -58,5 +60,12 @@ describe("SaveSurveyResultController", () => {
     const findByIdSpy = vi.spyOn(findSurveyByIdStub, "findById");
     await sut.handle(makeFakeRequest());
     expect(findByIdSpy).toHaveBeenCalledWith("any_survey_id");
+  });
+
+  test("should return 403 if FindSurveyById returns null", async () => {
+    const { sut, findSurveyByIdStub } = makeSut();
+    vi.spyOn(findSurveyByIdStub, "findById").mockResolvedValueOnce(null);
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError("surveyId")));
   });
 });
