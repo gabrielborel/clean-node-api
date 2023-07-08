@@ -1,4 +1,4 @@
-import { DbFindAccountByAccessToken } from "@/data/use-cases/find-account-by-access-token/db-find-account-by-access-token";
+import { DbFindAccountByAccessToken } from "@/data/use-cases/account/find-account-by-access-token/db-find-account-by-access-token";
 import { JwtAdapter } from "@/infra/criptography/jwt/jwt-adapter";
 import { MongoAccountRepository } from "@/infra/db/mongodb/account/mongo-account-repository";
 import { environment } from "@/main/config/env";

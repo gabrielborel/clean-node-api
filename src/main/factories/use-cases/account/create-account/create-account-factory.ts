@@ -1,4 +1,4 @@
-import { DbCreateAccount } from "@/data/use-cases/create-account/db-create-account";
+import { DbCreateAccount } from "@/data/use-cases/account/create-account/db-create-account";
 import { BcryptAdapter } from "@/infra/criptography/bcrypt/bcrypt-adapter";
 import { MongoAccountRepository } from "@/infra/db/mongodb/account/mongo-account-repository";
 

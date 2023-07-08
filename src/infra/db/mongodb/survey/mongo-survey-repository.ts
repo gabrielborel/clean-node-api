@@ -1,8 +1,8 @@
 import { FindSurveysRepository } from "@/data/protocols/db/survey/find-surveys-repository";
-import { CreateSurveyRepository } from "@/data/use-cases/create-survey/db-create-survey-protocols";
-import { FindSurveyByIdRepository } from "@/data/use-cases/find-survey-by-id/db-find-survey-by-id-protocols";
+import { CreateSurveyRepository } from "@/data/use-cases/survey/create-survey/db-create-survey-protocols";
+import { FindSurveyByIdRepository } from "@/data/use-cases/survey/find-survey-by-id/db-find-survey-by-id-protocols";
 import { SurveyModel } from "@/domain/models/survey";
-import { CreateSurveyModel } from "@/domain/use-cases/create-survey";
+import { CreateSurveyModel } from "@/domain/use-cases/survey/create-survey";
 import { MongoHelper } from "../helpers/mongo-helper";
 import { ObjectId } from "mongodb";
 
