@@ -33,29 +33,10 @@ describe("MongoDB Survey Repository", () => {
     await surveyCollection.deleteMany({});
   });
 
-  test("should create a survey on success", async () => {
-    const sut = makeSut();
-    await sut.create({
-      question: "any_question",
-      answers: [
-        {
-          image: "any_image",
-          answer: "any_answer",
-        },
-        {
-          answer: "other_answer",
-        },
-      ],
-      date: new Date(),
-    });
-    const survey = await surveyCollection.findOne({ question: "any_question" });
-    expect(survey).toBeTruthy();
-  });
-
-  test("should return an array of surveys on success", async () => {
-    const sut = makeSut();
-    await surveyCollection.insertMany([
-      {
+  describe("create()", () => {
+    test("should create a survey on success", async () => {
+      const sut = makeSut();
+      await sut.create({
         question: "any_question",
         answers: [
           {
@@ -67,30 +48,77 @@ describe("MongoDB Survey Repository", () => {
           },
         ],
         date: new Date(),
-      },
-      {
-        question: "other_question",
+      });
+      const survey = await surveyCollection.findOne({
+        question: "any_question",
+      });
+      expect(survey).toBeTruthy();
+    });
+  });
+
+  describe("findAll()", () => {
+    test("should return an array of surveys on success", async () => {
+      const sut = makeSut();
+      await surveyCollection.insertMany([
+        {
+          question: "any_question",
+          answers: [
+            {
+              image: "any_image",
+              answer: "any_answer",
+            },
+            {
+              answer: "other_answer",
+            },
+          ],
+          date: new Date(),
+        },
+        {
+          question: "other_question",
+          answers: [
+            {
+              image: "other_image",
+              answer: "other_answer",
+            },
+            {
+              answer: "other_answer",
+            },
+          ],
+          date: new Date(),
+        },
+      ]);
+      const surveys = await sut.findAll();
+      expect(surveys.length).toBe(2);
+      expect(surveys[0].question).toBe("any_question");
+      expect(surveys[1].question).toBe("other_question");
+    });
+
+    test("should return an empty array if there are no surveys", async () => {
+      const sut = makeSut();
+      const surveys = await sut.findAll();
+      expect(surveys.length).toBe(0);
+    });
+  });
+
+  describe("findById()", () => {
+    test("should return a survey on success", async () => {
+      const sut = makeSut();
+      const res = await surveyCollection.insertOne({
+        question: "any_question",
         answers: [
           {
-            image: "other_image",
-            answer: "other_answer",
+            image: "any_image",
+            answer: "any_answer",
           },
           {
             answer: "other_answer",
           },
         ],
         date: new Date(),
-      },
-    ]);
-    const surveys = await sut.findAll();
-    expect(surveys.length).toBe(2);
-    expect(surveys[0].question).toBe("any_question");
-    expect(surveys[1].question).toBe("other_question");
-  });
-
-  test("should return an empty array if there are no surveys", async () => {
-    const sut = makeSut();
-    const surveys = await sut.findAll();
-    expect(surveys.length).toBe(0);
+      });
+      const id = res.insertedId.toString();
+      const survey = await sut.findById(id);
+      expect(survey).toBeTruthy();
+    });
   });
 });
