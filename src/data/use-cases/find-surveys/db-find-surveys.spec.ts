@@ -1,8 +1,10 @@
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
-import { SurveyModel } from "@/domain/models/survey";
-import { FindSurveys } from "@/domain/use-cases/find-surveys";
-import { FindSurveysRepository } from "@/data/protocols/db/survey/find-surveys-repository";
 import { DbFindSurveys } from "./db-find-surveys";
+import {
+  FindSurveys,
+  FindSurveysRepository,
+  SurveyModel,
+} from "./db-find-surveys-protocols";
 
 const makeFakeSurveys = (): SurveyModel[] => {
   return [

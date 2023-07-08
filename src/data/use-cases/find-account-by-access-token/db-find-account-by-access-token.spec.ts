@@ -1,8 +1,10 @@
 import { describe, test, vi, expect } from "vitest";
-import { Decrypter } from "@/data/protocols/criptography/decrypter";
 import { DbFindAccountByAccessToken } from "./db-find-account-by-access-token";
-import { AccountModel } from "../create-account/db-create-account-protocols";
-import { FindAccountByAccessTokenRepository } from "@/data/protocols/db/account/find-account-by-access-token-repository";
+import {
+  AccountModel,
+  Decrypter,
+  FindAccountByAccessTokenRepository,
+} from "./db-find-account-by-access-token-protocols";
 
 const makeFakeAccount = (): AccountModel => ({
   id: "valid_id",

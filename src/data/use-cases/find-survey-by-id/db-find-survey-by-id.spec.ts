@@ -1,8 +1,10 @@
-import { FindSurveyByIdRepository } from "@/data/protocols/db/survey/find-survey-by-id.repository";
-import { SurveyModel } from "@/domain/models/survey";
-import { FindSurveyById } from "@/domain/use-cases/find-survey-by-id";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { DbFindSurveyById } from "./db-find-survey-by-id";
+import {
+  FindSurveyById,
+  FindSurveyByIdRepository,
+  SurveyModel,
+} from "./db-find-survey-by-id-protocols";
 
 const makeFakeSurvey = (): SurveyModel => ({
   id: "any_id",

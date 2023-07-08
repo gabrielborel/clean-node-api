@@ -1,7 +1,9 @@
-import { FindAccountByAccessToken } from "@/domain/use-cases/find-account-by-access-token";
-import { Decrypter } from "@/data/protocols/criptography/decrypter";
-import { FindAccountByAccessTokenRepository } from "@/data/protocols/db/account/find-account-by-access-token-repository";
-import { AccountModel } from "../create-account/db-create-account-protocols";
+import {
+  AccountModel,
+  Decrypter,
+  FindAccountByAccessToken,
+  FindAccountByAccessTokenRepository,
+} from "./db-find-account-by-access-token-protocols";
 
 export class DbFindAccountByAccessToken implements FindAccountByAccessToken {
   constructor(
