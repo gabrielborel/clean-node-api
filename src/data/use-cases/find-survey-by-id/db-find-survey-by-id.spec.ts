@@ -51,4 +51,13 @@ describe("DbFindSurveyById Use Case", () => {
     await sut.findById("any_id");
     expect(findByIdSpy).toHaveBeenCalledWith("any_id");
   });
+
+  test("should throw if FindSurveyByIdRepository throws", async () => {
+    const { sut, findSurveyByIdRepositoryStub } = makeSut();
+    vi.spyOn(findSurveyByIdRepositoryStub, "findById").mockRejectedValueOnce(
+      new Error()
+    );
+    const promise = sut.findById("any_id");
+    await expect(promise).rejects.toThrow();
+  });
 });
