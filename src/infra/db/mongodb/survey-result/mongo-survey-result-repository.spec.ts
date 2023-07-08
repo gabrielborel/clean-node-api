@@ -77,13 +77,34 @@ describe("MongoDB Survey Repository", () => {
       const surveyResult = await sut.save({
         surveyId: survey.id,
         accountId: account.id,
-        answer: "any_answer",
+        answer: survey.answers[0].answer,
         date: new Date(),
       });
-      console.log(surveyResult);
       expect(surveyResult).toBeTruthy();
       expect(surveyResult.id).toBeTruthy();
-      expect(surveyResult.answer).toBe("any_answer");
+      expect(surveyResult.answer).toBe(survey.answers[0].answer);
+    });
+
+    test("should update a survey result if its not new", async () => {
+      const sut = makeSut();
+      const survey = await makeSurvey();
+      const account = await makeAccount();
+      const res = await surveyResultCollection.insertOne({
+        surveyId: survey.id,
+        accountId: account.id,
+        answer: survey.answers[0].answer,
+        date: new Date(),
+      });
+      const surveyResultId = res.insertedId.toString();
+      const surveyResult = await sut.save({
+        surveyId: survey.id,
+        accountId: account.id,
+        answer: "other_answer",
+        date: new Date(),
+      });
+      expect(surveyResult).toBeTruthy();
+      expect(surveyResult.id).toEqual(surveyResultId);
+      expect(surveyResult.answer).toBe("other_answer");
     });
   });
 });
