@@ -7,14 +7,20 @@ import {
   forbidden,
   ok,
   serverError,
+  SaveSurveyResult,
 } from "./save-survey-result-protocols";
 
 export class SaveSurveyResultController implements Controller {
-  constructor(private readonly findSurveyById: FindSurveyById) {}
+  constructor(
+    private readonly findSurveyById: FindSurveyById,
+    private readonly saveSurveyResult: SaveSurveyResult
+  ) {}
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
     try {
-      const { surveyId, answer } = request.params;
+      const { accountId } = request;
+      const { surveyId } = request.params;
+      const { answer } = request.body;
 
       const survey = await this.findSurveyById.findById(surveyId);
       if (!survey) {
@@ -27,7 +33,14 @@ export class SaveSurveyResultController implements Controller {
         return forbidden(new InvalidParamError("answer"));
       }
 
-      return ok(survey);
+      const surveyResult = await this.saveSurveyResult.save({
+        accountId: accountId!,
+        surveyId,
+        answer,
+        date: new Date(),
+      });
+
+      return ok(surveyResult);
     } catch (error) {
       return serverError(error as Error);
     }
