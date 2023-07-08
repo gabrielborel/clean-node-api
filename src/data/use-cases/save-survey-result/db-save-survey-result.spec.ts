@@ -60,4 +60,13 @@ describe("DbSaveSurveyResult Use Case", () => {
     await sut.save(surveyResultData);
     expect(saveSurveyResultSpy).toHaveBeenCalledWith(surveyResultData);
   });
+
+  test("should throw if SaveSurveyResultRepository throws", async () => {
+    const { sut, saveSurveyResultRepositoryStub } = makeSut();
+    vi.spyOn(saveSurveyResultRepositoryStub, "save").mockRejectedValueOnce(
+      new Error()
+    );
+    const promise = sut.save(makeFakeSurveyResultData());
+    await expect(promise).rejects.toThrow();
+  });
 });
