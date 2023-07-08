@@ -127,4 +127,11 @@ describe("SaveSurveyResultController", () => {
       answer: "any_answer",
     });
   });
+
+  test("should return 500 if SaveSurveyResult throws", async () => {
+    const { sut, saveSurveyResultStub } = makeSut();
+    vi.spyOn(saveSurveyResultStub, "save").mockRejectedValueOnce(new Error());
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(serverError(new Error()));
+  });
 });
