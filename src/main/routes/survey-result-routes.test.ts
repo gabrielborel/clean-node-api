@@ -15,7 +15,6 @@ const makeAccessToken = async (): Promise<string> => {
     name: "Any Name",
     email: "any_email@mail.com",
     password: "123",
-    role: "admin",
   });
   const accessToken = sign({ id: res.insertedId }, environment.jwtSecret);
   await accountCollection.updateOne(
@@ -57,6 +56,30 @@ describe("Survey Result Routes", () => {
           answer: "Answer 1",
         })
         .expect(403);
+    });
+
+    test("should return 201 on save survey result with accessToken", async () => {
+      const accessToken = await makeAccessToken();
+      const res = await surveyCollection.insertOne({
+        question: "Question",
+        answers: [
+          {
+            image: "http://image-name.com",
+            answer: "Answer 1",
+          },
+          {
+            answer: "Answer 2",
+          },
+        ],
+        date: new Date(),
+      });
+      await request(app)
+        .put(`/api/surveys/${res.insertedId.toString()}/results`)
+        .set("x-access-token", accessToken)
+        .send({
+          answer: "Answer 1",
+        })
+        .expect(201);
     });
   });
 });
