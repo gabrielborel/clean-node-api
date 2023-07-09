@@ -1,13 +1,13 @@
 import { InvalidParamError } from "@/presentations/errors";
 import {
-  Controller,
   FindSurveyById,
+  SaveSurveyResult,
+  Controller,
   HttpRequest,
   HttpResponse,
   forbidden,
-  ok,
   serverError,
-  SaveSurveyResult,
+  created,
 } from "./save-survey-result-protocols";
 
 export class SaveSurveyResultController implements Controller {
@@ -40,7 +40,7 @@ export class SaveSurveyResultController implements Controller {
         date: new Date(),
       });
 
-      return ok(surveyResult);
+      return created(surveyResult);
     } catch (error) {
       return serverError(error as Error);
     }
