@@ -1,11 +1,3 @@
-import {
-  test,
-  describe,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { MongoHelper } from "../helpers/mongo-helper";
 import { MongoAccountRepository } from "./mongo-account-repository";
@@ -14,20 +6,23 @@ const makeSut = (): MongoAccountRepository => {
   return new MongoAccountRepository();
 };
 
+let mongoServer: MongoMemoryServer;
+
 describe("MongoDB Account Repository", () => {
   beforeAll(async () => {
-    const mongo = await MongoMemoryServer.create();
-    const uri = mongo.getUri();
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
     await MongoHelper.connect(uri);
-  });
-
-  afterAll(async () => {
-    await MongoHelper.disconnect();
   });
 
   beforeEach(async () => {
     const accountCollection = await MongoHelper.getCollection("accounts");
     await accountCollection.deleteMany({});
+  });
+
+  afterAll(async () => {
+    await MongoHelper.disconnect();
+    await mongoServer.stop();
   });
 
   test("should return an account on createAccount success", async () => {

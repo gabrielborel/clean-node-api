@@ -1,4 +1,3 @@
-import { describe, expect, test, vi } from "vitest";
 import { AccessDeniedError } from "../errors";
 import { forbidden, ok, serverError } from "../helpers/http/http-helper";
 import { AuthMiddleware } from "./auth-middleware";
@@ -58,7 +57,7 @@ describe("Auth Middleware", () => {
     const role = "any_role";
     const { sut, findAccountByAccessTokenStub } = makeSut(role);
     const httpRequest = makeFakeRequest();
-    const findAccountByAccessTokenSpy = vi.spyOn(
+    const findAccountByAccessTokenSpy = jest.spyOn(
       findAccountByAccessTokenStub,
       "find"
     );
@@ -68,9 +67,9 @@ describe("Auth Middleware", () => {
 
   test("should return 403 if FindAccountByAccessToken returns null", async () => {
     const { sut, findAccountByAccessTokenStub } = makeSut();
-    vi.spyOn(findAccountByAccessTokenStub, "find").mockReturnValueOnce(
-      new Promise((resolve) => resolve(null))
-    );
+    jest
+      .spyOn(findAccountByAccessTokenStub, "find")
+      .mockReturnValueOnce(new Promise((resolve) => resolve(null)));
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()));
@@ -89,9 +88,11 @@ describe("Auth Middleware", () => {
 
   test("should return 500 if FindAccountByAccessToken throws", async () => {
     const { sut, findAccountByAccessTokenStub } = makeSut();
-    vi.spyOn(findAccountByAccessTokenStub, "find").mockReturnValueOnce(
-      new Promise((resolve, reject) => reject(new Error()))
-    );
+    jest
+      .spyOn(findAccountByAccessTokenStub, "find")
+      .mockReturnValueOnce(
+        new Promise((resolve, reject) => reject(new Error()))
+      );
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(serverError(new Error()));

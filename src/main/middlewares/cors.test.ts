@@ -1,6 +1,5 @@
 import request from "supertest";
 import { app } from "../config/app";
-import { test, describe } from "vitest";
 
 describe("CORS Middleware", () => {
   test("should enable CORS", async () => {

@@ -1,4 +1,3 @@
-import { test, describe, vi, expect } from "vitest";
 import { DbCreateAccount } from "./db-create-account";
 import {
   AccountModel,
@@ -79,7 +78,7 @@ const makeSut = (): SutType => {
 describe("DbCreateAccount UseCase", () => {
   test("should call Hasher with correct password", async () => {
     const { sut, hasherStub } = makeSut();
-    const hasherSpy = vi.spyOn(hasherStub, "hash");
+    const hasherSpy = jest.spyOn(hasherStub, "hash");
     const accountData = makeFakeAccountData();
     await sut.create(accountData);
     expect(hasherSpy).toHaveBeenCalledWith("valid_password");
@@ -87,7 +86,7 @@ describe("DbCreateAccount UseCase", () => {
 
   test("should throw if Hasher throws", async () => {
     const { sut, hasherStub } = makeSut();
-    vi.spyOn(hasherStub, "hash").mockRejectedValueOnce(new Error());
+    jest.spyOn(hasherStub, "hash").mockRejectedValueOnce(new Error());
     const accountData = makeFakeAccountData();
     const promise = sut.create(accountData);
     await expect(promise).rejects.toThrow();
@@ -95,7 +94,7 @@ describe("DbCreateAccount UseCase", () => {
 
   test("should call CreateAccountRepository with correct data", async () => {
     const { sut, createAccountRepositoryStub } = makeSut();
-    const createSpy = vi.spyOn(createAccountRepositoryStub, "create");
+    const createSpy = jest.spyOn(createAccountRepositoryStub, "create");
     const accountData = makeFakeAccountData();
     await sut.create(accountData);
     expect(createSpy).toHaveBeenCalledWith({
@@ -107,9 +106,9 @@ describe("DbCreateAccount UseCase", () => {
 
   test("should throw if CreateAccountRepository throws", async () => {
     const { sut, createAccountRepositoryStub } = makeSut();
-    vi.spyOn(createAccountRepositoryStub, "create").mockRejectedValueOnce(
-      new Error()
-    );
+    jest
+      .spyOn(createAccountRepositoryStub, "create")
+      .mockRejectedValueOnce(new Error());
     const accountData = makeFakeAccountData();
     const promise = sut.create(accountData);
     await expect(promise).rejects.toThrow();
@@ -128,17 +127,16 @@ describe("DbCreateAccount UseCase", () => {
 
   test("should call FindAccountByEmailRepository with correct values", async () => {
     const { sut, findAccountByEmailRepositoryStub } = makeSut();
-    const findSpy = vi.spyOn(findAccountByEmailRepositoryStub, "findByEmail");
+    const findSpy = jest.spyOn(findAccountByEmailRepositoryStub, "findByEmail");
     await sut.create(makeFakeAccountData());
     expect(findSpy).toHaveBeenCalledWith("valid_email@mail.com");
   });
 
   test("should return null if FindAccountByEmailRepository returns an account", async () => {
     const { sut, findAccountByEmailRepositoryStub } = makeSut();
-    vi.spyOn(
-      findAccountByEmailRepositoryStub,
-      "findByEmail"
-    ).mockResolvedValueOnce(makeFakeAccount());
+    jest
+      .spyOn(findAccountByEmailRepositoryStub, "findByEmail")
+      .mockResolvedValueOnce(makeFakeAccount());
     const accountData = makeFakeAccountData();
     const createdAccount = await sut.create(accountData);
     expect(createdAccount).toBeNull();

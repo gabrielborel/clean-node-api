@@ -1,4 +1,3 @@
-import { describe, test, vi, expect, beforeAll, afterAll } from "vitest";
 import {
   CreateSurvey,
   CreateSurveyModel,
@@ -56,17 +55,17 @@ const makeSut = (): SutType => {
 
 describe("CreateSurveyController", () => {
   beforeAll(() => {
-    vi.useFakeTimers();
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
-    vi.clearAllTimers();
+    jest.clearAllTimers();
   });
 
   test("should call Validation with correct values", async () => {
     const { sut, validationStub } = makeSut();
     const request = makeFakeRequest();
-    const validateSpy = vi.spyOn(validationStub, "validate");
+    const validateSpy = jest.spyOn(validationStub, "validate");
     await sut.handle(request);
     expect(validateSpy).toHaveBeenCalledWith(request.body);
   });
@@ -74,7 +73,7 @@ describe("CreateSurveyController", () => {
   test("should return 400 if Validation fails", async () => {
     const { sut, validationStub } = makeSut();
     const request = makeFakeRequest();
-    vi.spyOn(validationStub, "validate").mockReturnValueOnce(new Error());
+    jest.spyOn(validationStub, "validate").mockReturnValueOnce(new Error());
     const response = await sut.handle(request);
     expect(response).toEqual(badRequest(new Error()));
   });
@@ -82,7 +81,7 @@ describe("CreateSurveyController", () => {
   test("should call CreateSurvey with correct values", async () => {
     const { sut, createSurveyStub } = makeSut();
     const request = makeFakeRequest();
-    const createSpy = vi.spyOn(createSurveyStub, "create");
+    const createSpy = jest.spyOn(createSurveyStub, "create");
     await sut.handle(request);
     expect(createSpy).toHaveBeenCalledWith(request.body);
   });
@@ -90,7 +89,7 @@ describe("CreateSurveyController", () => {
   test("should return 500 if CreateSurvey throws", async () => {
     const { sut, createSurveyStub } = makeSut();
     const request = makeFakeRequest();
-    vi.spyOn(createSurveyStub, "create").mockImplementationOnce(() => {
+    jest.spyOn(createSurveyStub, "create").mockImplementationOnce(() => {
       throw new Error();
     });
     const response = await sut.handle(request);

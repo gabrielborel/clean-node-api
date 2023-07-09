@@ -1,31 +1,17 @@
 import request from "supertest";
 import { app } from "../config/app";
 import { MongoHelper } from "../../infra/db/mongodb/helpers/mongo-helper";
-import {
-  test,
-  describe,
-  expect,
-  beforeAll,
-  beforeEach,
-  afterAll,
-} from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { Collection } from "mongodb";
 import { hash } from "bcrypt";
 
-const timeout = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
 let accountCollection: Collection;
+let mongoServer: MongoMemoryServer;
 
-describe("Login Routes", async () => {
+describe("Login Routes", () => {
   beforeAll(async () => {
-    const mongo = await MongoMemoryServer.create();
-    await MongoHelper.connect(mongo.getUri());
-  });
-
-  afterAll(async () => {
-    await MongoHelper.disconnect();
+    mongoServer = await MongoMemoryServer.create();
+    await MongoHelper.connect(mongoServer.getUri());
   });
 
   beforeEach(async () => {
@@ -33,13 +19,13 @@ describe("Login Routes", async () => {
     await accountCollection.deleteMany({});
   });
 
+  afterAll(async () => {
+    await MongoHelper.disconnect();
+    await mongoServer.stop();
+  });
+
   describe("POST /signup", () => {
     test("should return 201 on signup", async () => {
-      /**
-       * IDK why but this timeout is necessary, if not, the test will return 404
-       * like the application hasn't build yet and the test make the request
-       */
-      await timeout(500);
       const response = await request(app).post("/api/signup").send({
         name: "Any Name",
         email: "any_email@mail.com",

@@ -1,4 +1,3 @@
-import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { SaveSurveyResultController } from "./save-survey-result-controller";
 import {
   FindSurveyById,
@@ -80,30 +79,32 @@ const makeSut = (): SutType => {
 
 describe("SaveSurveyResultController", () => {
   beforeAll(() => {
-    vi.useFakeTimers();
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
-    vi.clearAllTimers();
+    jest.clearAllTimers();
   });
 
   test("should return call FindSurveyById with correct value", async () => {
     const { sut, findSurveyByIdStub } = makeSut();
-    const findByIdSpy = vi.spyOn(findSurveyByIdStub, "findById");
+    const findByIdSpy = jest.spyOn(findSurveyByIdStub, "findById");
     await sut.handle(makeFakeRequest());
     expect(findByIdSpy).toHaveBeenCalledWith("any_survey_id");
   });
 
   test("should return 403 if FindSurveyById returns null", async () => {
     const { sut, findSurveyByIdStub } = makeSut();
-    vi.spyOn(findSurveyByIdStub, "findById").mockResolvedValueOnce(null);
+    jest.spyOn(findSurveyByIdStub, "findById").mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(makeFakeRequest());
     expect(httpResponse).toEqual(forbidden(new InvalidParamError("surveyId")));
   });
 
   test("should return 500 if FindSurveyById throws", async () => {
     const { sut, findSurveyByIdStub } = makeSut();
-    vi.spyOn(findSurveyByIdStub, "findById").mockRejectedValueOnce(new Error());
+    jest
+      .spyOn(findSurveyByIdStub, "findById")
+      .mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(makeFakeRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
   });
@@ -119,7 +120,7 @@ describe("SaveSurveyResultController", () => {
   test("should call SaveSurveyResult with correct values", async () => {
     const { sut, saveSurveyResultStub } = makeSut();
     const httpRequest = makeFakeRequest();
-    const saveSpy = vi.spyOn(saveSurveyResultStub, "save");
+    const saveSpy = jest.spyOn(saveSurveyResultStub, "save");
     await sut.handle(httpRequest);
     expect(saveSpy).toHaveBeenCalledWith({
       surveyId: "any_survey_id",
@@ -131,7 +132,7 @@ describe("SaveSurveyResultController", () => {
 
   test("should return 500 if SaveSurveyResult throws", async () => {
     const { sut, saveSurveyResultStub } = makeSut();
-    vi.spyOn(saveSurveyResultStub, "save").mockRejectedValueOnce(new Error());
+    jest.spyOn(saveSurveyResultStub, "save").mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(makeFakeRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
   });

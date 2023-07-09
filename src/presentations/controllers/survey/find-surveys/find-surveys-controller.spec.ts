@@ -1,4 +1,3 @@
-import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { FindSurveysController } from "./find-surveys-controller";
 import { FindSurveys, SurveyModel } from "./find-surveys-controller-protocols";
 import { noContent, ok, serverError } from "../../../helpers/http/http-helper";
@@ -52,16 +51,16 @@ const makeSut = (): SutType => {
 
 describe("FindSurveysController", () => {
   beforeAll(() => {
-    vi.useFakeTimers();
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
-    vi.clearAllTimers();
+    jest.clearAllTimers();
   });
 
   test("should call FindSurveys", async () => {
     const { sut, findSurveysStub } = makeSut();
-    const findSurveysSpy = vi.spyOn(findSurveysStub, "find");
+    const findSurveysSpy = jest.spyOn(findSurveysStub, "find");
     await sut.handle({});
     expect(findSurveysSpy).toHaveBeenCalled();
   });
@@ -74,7 +73,7 @@ describe("FindSurveysController", () => {
 
   test("should return 204 if no surveys found", async () => {
     const { sut, findSurveysStub } = makeSut();
-    vi.spyOn(findSurveysStub, "find").mockImplementationOnce(async () => {
+    jest.spyOn(findSurveysStub, "find").mockImplementationOnce(async () => {
       return Promise.resolve([]);
     });
     const httpResponse = await sut.handle({});
@@ -83,7 +82,7 @@ describe("FindSurveysController", () => {
 
   test("should return 500 if FindSurveys throws", async () => {
     const { sut, findSurveysStub } = makeSut();
-    vi.spyOn(findSurveysStub, "find").mockImplementationOnce(async () => {
+    jest.spyOn(findSurveysStub, "find").mockImplementationOnce(async () => {
       return Promise.reject(new Error());
     });
     const httpResponse = await sut.handle({});

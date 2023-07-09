@@ -1,11 +1,3 @@
-import {
-  test,
-  describe,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-} from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { MongoHelper } from "../helpers/mongo-helper";
 import { MongoSurveyRepository } from "./mongo-survey-repository";
@@ -16,21 +8,23 @@ const makeSut = (): MongoSurveyRepository => {
 };
 
 let surveyCollection: Collection;
+let mongoServer: MongoMemoryServer;
 
 describe("MongoDB Survey Repository", () => {
   beforeAll(async () => {
-    const mongo = await MongoMemoryServer.create();
-    const uri = mongo.getUri();
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
     await MongoHelper.connect(uri);
-  });
-
-  afterAll(async () => {
-    await MongoHelper.disconnect();
   });
 
   beforeEach(async () => {
     surveyCollection = await MongoHelper.getCollection("surveys");
     await surveyCollection.deleteMany({});
+  });
+
+  afterAll(async () => {
+    await MongoHelper.disconnect();
+    await mongoServer.stop();
   });
 
   describe("create()", () => {

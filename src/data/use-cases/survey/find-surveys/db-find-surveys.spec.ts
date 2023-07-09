@@ -1,4 +1,3 @@
-import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { DbFindSurveys } from "./db-find-surveys";
 import {
   FindSurveys,
@@ -55,16 +54,16 @@ const makeSut = (): SutType => {
 
 describe("DbFindSurveys Use Case", () => {
   beforeAll(() => {
-    vi.useFakeTimers();
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
-    vi.clearAllTimers();
+    jest.clearAllTimers();
   });
 
   test("should call FindSurveysRepository", async () => {
     const { sut, findSurveysRepositoryStub } = makeSut();
-    const findAllSpy = vi.spyOn(findSurveysRepositoryStub, "findAll");
+    const findAllSpy = jest.spyOn(findSurveysRepositoryStub, "findAll");
     await sut.find();
     expect(findAllSpy).toHaveBeenCalled();
   });
@@ -77,9 +76,9 @@ describe("DbFindSurveys Use Case", () => {
 
   test("should throw if FindSurveysRepository throws", async () => {
     const { sut, findSurveysRepositoryStub } = makeSut();
-    vi.spyOn(findSurveysRepositoryStub, "findAll").mockRejectedValueOnce(
-      new Error()
-    );
+    jest
+      .spyOn(findSurveysRepositoryStub, "findAll")
+      .mockRejectedValueOnce(new Error());
     const promise = sut.find();
     await expect(promise).rejects.toThrow();
   });

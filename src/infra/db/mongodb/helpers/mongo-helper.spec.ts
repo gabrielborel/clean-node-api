@@ -1,15 +1,17 @@
 import { MongoHelper as sut } from "./mongo-helper";
-import { test, describe, expect, beforeAll, afterAll } from "vitest";
 import { MongoMemoryServer } from "mongodb-memory-server";
+
+let mongoServer: MongoMemoryServer;
 
 describe("Mongo Helper", () => {
   beforeAll(async () => {
-    const mongo = await MongoMemoryServer.create();
-    await sut.connect(mongo.getUri());
+    mongoServer = await MongoMemoryServer.create();
+    await sut.connect(mongoServer.getUri());
   });
 
   afterAll(async () => {
     await sut.disconnect();
+    await mongoServer.stop();
   });
 
   test("should reconnect if mongodb is down", async () => {

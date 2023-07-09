@@ -1,15 +1,12 @@
-import { describe, expect, test, vi } from "vitest";
 import jwt from "jsonwebtoken";
 import { JwtAdapter } from "./jwt-adapter";
 
-vi.mock("jsonwebtoken", () => ({
-  default: {
-    async sign(): Promise<string> {
-      return "any_token";
-    },
-    async verify(): Promise<string> {
-      return "any_value";
-    },
+jest.mock("jsonwebtoken", () => ({
+  async sign(): Promise<string> {
+    return "any_token";
+  },
+  async verify(): Promise<string> {
+    return "any_value";
   },
 }));
 
@@ -20,7 +17,7 @@ const makeSut = (): JwtAdapter => {
 describe("JWT Adapter", () => {
   test("should call sign with correct values", async () => {
     const sut = makeSut();
-    const signSpy = vi.spyOn(jwt, "sign");
+    const signSpy = jest.spyOn(jwt, "sign");
     await sut.encrypt("any_id");
     expect(signSpy).toHaveBeenCalledWith(
       {
@@ -38,14 +35,16 @@ describe("JWT Adapter", () => {
 
   test("should throw if sign throws", async () => {
     const sut = makeSut();
-    vi.spyOn(jwt, "sign").mockRejectedValueOnce(new Error());
+    jest
+      .spyOn(jwt, "sign")
+      .mockImplementationOnce(() => Promise.reject(new Error()));
     const promise = sut.encrypt("any_id");
     await expect(promise).rejects.toThrow();
   });
 
   test("should call verify with correct values", async () => {
     const sut = makeSut();
-    const verifySpy = vi.spyOn(jwt, "verify");
+    const verifySpy = jest.spyOn(jwt, "verify");
     await sut.decrypt("any_token");
     expect(verifySpy).toHaveBeenCalledWith("any_token", "secret");
   });
@@ -58,7 +57,9 @@ describe("JWT Adapter", () => {
 
   test("should throw if verify throws", async () => {
     const sut = makeSut();
-    vi.spyOn(jwt, "verify").mockRejectedValueOnce(new Error());
+    jest
+      .spyOn(jwt, "verify")
+      .mockImplementationOnce(() => Promise.reject(new Error()));
     const promise = sut.decrypt("any_token");
     await expect(promise).rejects.toThrow();
   });

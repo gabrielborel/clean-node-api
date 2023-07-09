@@ -1,4 +1,3 @@
-import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { DbFindSurveyById } from "./db-find-survey-by-id";
 import {
   FindSurveyById,
@@ -40,25 +39,25 @@ const makeSut = (): SutType => {
 
 describe("DbFindSurveyById Use Case", () => {
   beforeAll(() => {
-    vi.useFakeTimers();
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
-    vi.clearAllTimers();
+    jest.clearAllTimers();
   });
 
   test("should call FindSurveyByIdRepository with correct value", async () => {
     const { sut, findSurveyByIdRepositoryStub } = makeSut();
-    const findByIdSpy = vi.spyOn(findSurveyByIdRepositoryStub, "findById");
+    const findByIdSpy = jest.spyOn(findSurveyByIdRepositoryStub, "findById");
     await sut.findById("any_id");
     expect(findByIdSpy).toHaveBeenCalledWith("any_id");
   });
 
   test("should throw if FindSurveyByIdRepository throws", async () => {
     const { sut, findSurveyByIdRepositoryStub } = makeSut();
-    vi.spyOn(findSurveyByIdRepositoryStub, "findById").mockRejectedValueOnce(
-      new Error()
-    );
+    jest
+      .spyOn(findSurveyByIdRepositoryStub, "findById")
+      .mockRejectedValueOnce(new Error());
     const promise = sut.findById("any_id");
     await expect(promise).rejects.toThrow();
   });
@@ -71,9 +70,9 @@ describe("DbFindSurveyById Use Case", () => {
 
   test("should return null if FindSurveyByIdRepository returns null", async () => {
     const { sut, findSurveyByIdRepositoryStub } = makeSut();
-    vi.spyOn(findSurveyByIdRepositoryStub, "findById").mockResolvedValueOnce(
-      null
-    );
+    jest
+      .spyOn(findSurveyByIdRepositoryStub, "findById")
+      .mockResolvedValueOnce(null);
     const survey = await sut.findById("any_id");
     expect(survey).toBeNull();
   });

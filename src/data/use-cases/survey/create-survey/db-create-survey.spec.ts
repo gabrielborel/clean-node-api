@@ -1,4 +1,3 @@
-import { describe, test, vi, expect, beforeAll, afterAll } from "vitest";
 import { DbCreateSurvey } from "./db-create-survey";
 import {
   CreateSurveyModel,
@@ -38,16 +37,16 @@ const makeSut = (): SutType => {
 
 describe("DbCreateSurvey Use Case", () => {
   beforeAll(() => {
-    vi.useFakeTimers();
+    jest.useFakeTimers();
   });
 
   afterAll(() => {
-    vi.clearAllTimers();
+    jest.clearAllTimers();
   });
 
   test("should call CreateSurveyRepository with correct values", async () => {
     const { sut, createSurveyRepositoryStub } = makeSut();
-    const createSpy = vi.spyOn(createSurveyRepositoryStub, "create");
+    const createSpy = jest.spyOn(createSurveyRepositoryStub, "create");
     const surveyData = makeFakeSurveyData();
     await sut.create(surveyData);
     expect(createSpy).toHaveBeenCalledWith(surveyData);
@@ -55,9 +54,9 @@ describe("DbCreateSurvey Use Case", () => {
 
   test("should throw if CreateSurveyRepository throws", async () => {
     const { sut, createSurveyRepositoryStub } = makeSut();
-    vi.spyOn(createSurveyRepositoryStub, "create").mockRejectedValueOnce(
-      new Error()
-    );
+    jest
+      .spyOn(createSurveyRepositoryStub, "create")
+      .mockRejectedValueOnce(new Error());
     const promise = sut.create(makeFakeSurveyData());
     await expect(promise).rejects.toThrow();
   });

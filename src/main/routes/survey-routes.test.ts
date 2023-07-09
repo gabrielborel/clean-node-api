@@ -2,16 +2,13 @@ import { sign } from "jsonwebtoken";
 import { Collection } from "mongodb";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import request from "supertest";
-import { afterAll, beforeAll, beforeEach, describe, test } from "vitest";
 import { MongoHelper } from "@/infra/db/mongodb/helpers/mongo-helper";
 import { app } from "@/main/config/app";
 import { environment } from "@/main/config/env";
 
-const timeout = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
 let surveyCollection: Collection;
 let accountCollection: Collection;
+let mongoServer: MongoMemoryServer;
 
 const makeAccessToken = async (): Promise<string> => {
   const res = await accountCollection.insertOne({
@@ -34,14 +31,10 @@ const makeAccessToken = async (): Promise<string> => {
   return accessToken;
 };
 
-describe("Survey Routes", async () => {
+describe("Survey Routes", () => {
   beforeAll(async () => {
-    const mongo = await MongoMemoryServer.create();
-    await MongoHelper.connect(mongo.getUri());
-  });
-
-  afterAll(async () => {
-    await MongoHelper.disconnect();
+    mongoServer = await MongoMemoryServer.create();
+    await MongoHelper.connect(mongoServer.getUri());
   });
 
   beforeEach(async () => {
@@ -51,13 +44,13 @@ describe("Survey Routes", async () => {
     await accountCollection.deleteMany({});
   });
 
+  afterAll(async () => {
+    await MongoHelper.disconnect();
+    await mongoServer.stop();
+  });
+
   describe("POST /surveys", () => {
     test("should return 403 on create survey without accessToken", async () => {
-      /**
-       * IDK why but this timeout is necessary, if not, the test will return 404
-       * like the application hasn't build yet and the test make the request
-       */
-      await timeout(600);
       await request(app)
         .post("/api/surveys")
         .send({
@@ -77,7 +70,6 @@ describe("Survey Routes", async () => {
 
     test("should return 204 on create survey with valid accessToken", async () => {
       const accessToken = await makeAccessToken();
-      await timeout(300);
       await request(app)
         .post("/api/surveys")
         .set("x-access-token", accessToken)
@@ -99,13 +91,11 @@ describe("Survey Routes", async () => {
 
   describe("GET /surveys", () => {
     test("should return 403 on load surveys without accessToken", async () => {
-      await timeout(600);
       await request(app).get("/api/surveys").expect(403);
     });
 
     test("should return 204 on load surveys with valid accessToken, but no surveys found", async () => {
       const accessToken = await makeAccessToken();
-      await timeout(300);
       await request(app)
         .get("/api/surveys")
         .set("x-access-token", accessToken)
@@ -127,7 +117,6 @@ describe("Survey Routes", async () => {
           date: new Date(),
         },
       ]);
-      await timeout(300);
       await request(app)
         .get("/api/surveys")
         .set("x-access-token", accessToken)
