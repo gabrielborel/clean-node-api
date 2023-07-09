@@ -1,7 +1,7 @@
 import {
   AccountModel,
   CreateAccount,
-  CreateAccountModel,
+  CreateAccountParams,
   CreateAccountRepository,
   FindAccountByEmailRepository,
   Hasher,
@@ -14,7 +14,7 @@ export class DbCreateAccount implements CreateAccount {
     private readonly findAccountByEmailRepository: FindAccountByEmailRepository
   ) {}
 
-  async create(accountData: CreateAccountModel): Promise<AccountModel | null> {
+  async create(accountData: CreateAccountParams): Promise<AccountModel | null> {
     const accountExists = await this.findAccountByEmailRepository.findByEmail(
       accountData.email
     );

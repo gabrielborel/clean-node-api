@@ -2,7 +2,7 @@ import { FindSurveysRepository } from "@/data/protocols/db/survey/find-surveys-r
 import { CreateSurveyRepository } from "@/data/use-cases/survey/create-survey/db-create-survey-protocols";
 import { FindSurveyByIdRepository } from "@/data/use-cases/survey/find-survey-by-id/db-find-survey-by-id-protocols";
 import { SurveyModel } from "@/domain/models/survey";
-import { CreateSurveyModel } from "@/domain/use-cases/survey/create-survey";
+import { CreateSurveyParams } from "@/domain/use-cases/survey/create-survey";
 import { MongoHelper } from "../helpers/mongo-helper";
 import { ObjectId } from "mongodb";
 
@@ -12,7 +12,7 @@ export class MongoSurveyRepository
     FindSurveysRepository,
     FindSurveyByIdRepository
 {
-  async create(data: CreateSurveyModel): Promise<void> {
+  async create(data: CreateSurveyParams): Promise<void> {
     const surveyCollection = await MongoHelper.getCollection("surveys");
     await surveyCollection.insertOne(data);
   }

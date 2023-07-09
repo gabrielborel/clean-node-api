@@ -1,7 +1,7 @@
 import { DbCreateAccount } from "./db-create-account";
 import {
   AccountModel,
-  CreateAccountModel,
+  CreateAccountParams,
   CreateAccountRepository,
   FindAccountByEmailRepository,
   Hasher,
@@ -18,7 +18,7 @@ const makeHasher = (): Hasher => {
 
 const makeCreateAccountRepository = (): CreateAccountRepository => {
   class CreateAccountRepositoryStub implements CreateAccountRepository {
-    async create(account: CreateAccountModel): Promise<AccountModel> {
+    async create(account: CreateAccountParams): Promise<AccountModel> {
       const fakeAccount = makeFakeAccount();
       return new Promise((resolve) => resolve(fakeAccount));
     }
@@ -45,7 +45,7 @@ const makeFakeAccount = (): AccountModel => ({
   accessToken: "valid_token",
 });
 
-const makeFakeAccountData = (): CreateAccountModel => ({
+const makeFakeAccountData = (): CreateAccountParams => ({
   name: "valid_name",
   email: "valid_email@mail.com",
   password: "valid_password",

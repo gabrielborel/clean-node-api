@@ -3,7 +3,7 @@ import {
   HashComparer,
   UpdateAccessTokenRepository,
   Encrypter,
-  AuthenticationModel,
+  AuthenticationParams,
   FindAccountByEmailRepository,
   AccountModel,
 } from "./db-authentication-protocols";
@@ -16,7 +16,7 @@ const makeFakeAccount = (): AccountModel => ({
   accessToken: "valid_token",
 });
 
-const makeFakeAuthentication = (): AuthenticationModel => ({
+const makeFakeAuthentication = (): AuthenticationParams => ({
   email: "any_email@mail.com",
   password: "any_password",
 });

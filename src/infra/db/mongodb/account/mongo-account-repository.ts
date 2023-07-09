@@ -3,7 +3,7 @@ import { CreateAccountRepository } from "@/data/protocols/db/account/create-acco
 import { FindAccountByEmailRepository } from "@/data/protocols/db/account/find-account-by-email-repository";
 import { UpdateAccessTokenRepository } from "@/data/protocols/db/account/update-access-token-repository";
 import { AccountModel } from "@/domain/models/account";
-import { CreateAccountModel } from "@/domain/use-cases/account/create-account";
+import { CreateAccountParams } from "@/domain/use-cases/account/create-account";
 import { MongoHelper } from "../helpers/mongo-helper";
 import { FindAccountByAccessTokenRepository } from "@/data/protocols/db/account/find-account-by-access-token-repository";
 
@@ -14,7 +14,7 @@ export class MongoAccountRepository
     UpdateAccessTokenRepository,
     FindAccountByAccessTokenRepository
 {
-  async create(account: CreateAccountModel): Promise<AccountModel> {
+  async create(account: CreateAccountParams): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection("accounts");
     const result = await accountCollection.insertOne(account);
     const createdAccount = await accountCollection.findOne({

@@ -2,7 +2,7 @@ import { InvalidParamError, ServerError } from "@/presentations/errors";
 import {
   HttpRequest,
   Authentication,
-  AuthenticationModel,
+  AuthenticationParams,
 } from "./signin-controller-protocols";
 import { SignInController } from "./signin-controller";
 import { Validation } from "@/presentations/protocols/validation";
@@ -22,7 +22,7 @@ const makeFakeRequest = (): HttpRequest => ({
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
-    async auth(data: AuthenticationModel): Promise<string> {
+    async auth(data: AuthenticationParams): Promise<string> {
       return new Promise((resolve, reject) => resolve("access_token"));
     }
   }

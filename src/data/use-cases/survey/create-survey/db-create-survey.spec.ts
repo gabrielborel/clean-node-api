@@ -1,19 +1,19 @@
 import { DbCreateSurvey } from "./db-create-survey";
 import {
-  CreateSurveyModel,
+  CreateSurveyParams,
   CreateSurveyRepository,
 } from "./db-create-survey-protocols";
 
 const makeCreateSurveyRepositoryStub = (): CreateSurveyRepository => {
   class CreateSurveyRepositoryStub implements CreateSurveyRepository {
-    async create(data: CreateSurveyModel): Promise<void> {
+    async create(data: CreateSurveyParams): Promise<void> {
       return Promise.resolve();
     }
   }
   return new CreateSurveyRepositoryStub();
 };
 
-const makeFakeSurveyData = (): CreateSurveyModel => ({
+const makeFakeSurveyData = (): CreateSurveyParams => ({
   question: "any_question",
   answers: [
     {

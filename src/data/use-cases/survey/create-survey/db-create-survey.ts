@@ -1,7 +1,7 @@
 import {
   CreateSurveyRepository,
   CreateSurvey,
-  CreateSurveyModel,
+  CreateSurveyParams,
 } from "./db-create-survey-protocols";
 
 export class DbCreateSurvey implements CreateSurvey {
@@ -9,7 +9,7 @@ export class DbCreateSurvey implements CreateSurvey {
     private readonly createSurveyRepository: CreateSurveyRepository
   ) {}
 
-  async create(data: CreateSurveyModel): Promise<void> {
+  async create(data: CreateSurveyParams): Promise<void> {
     await this.createSurveyRepository.create(data);
   }
 }

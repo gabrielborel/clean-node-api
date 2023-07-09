@@ -1,6 +1,6 @@
 import {
   CreateSurvey,
-  CreateSurveyModel,
+  CreateSurveyParams,
   HttpRequest,
   badRequest,
   noContent,
@@ -20,7 +20,7 @@ const makeValidationStub = (): Validation => {
 
 const makeCreateSurveyStub = (): CreateSurvey => {
   class CreateSurveyStub implements CreateSurvey {
-    async create(data: CreateSurveyModel): Promise<void> {
+    async create(data: CreateSurveyParams): Promise<void> {
       return new Promise((resolve) => resolve());
     }
   }
