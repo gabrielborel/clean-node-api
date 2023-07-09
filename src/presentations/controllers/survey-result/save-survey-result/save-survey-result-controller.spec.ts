@@ -10,6 +10,7 @@ import {
   serverError,
   SurveyResultModel,
   InvalidParamError,
+  created,
 } from "./save-survey-result-protocols";
 
 const makeFakeSurvey = (): SurveyModel => ({
@@ -133,5 +134,11 @@ describe("SaveSurveyResultController", () => {
     vi.spyOn(saveSurveyResultStub, "save").mockRejectedValueOnce(new Error());
     const httpResponse = await sut.handle(makeFakeRequest());
     expect(httpResponse).toEqual(serverError(new Error()));
+  });
+
+  test("should return 201 on success", async () => {
+    const { sut } = makeSut();
+    const httpResponse = await sut.handle(makeFakeRequest());
+    expect(httpResponse).toEqual(created(makeFakeSurveyResult()));
   });
 });
