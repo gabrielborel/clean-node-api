@@ -1,2 +1,2 @@
-export * from "../../../protocols";
-export * from "@/domain/use-cases/authentication";
+export * from "@/presentations/protocols";
+export * from "@/domain/use-cases/account/authentication";

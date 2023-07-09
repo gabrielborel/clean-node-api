@@ -9,7 +9,7 @@ export class DbFindSurveyById implements FindSurveyById {
     private readonly findSurveyByIdRepository: FindSurveyByIdRepository
   ) {}
 
-  async findById(id: string): Promise<SurveyModel> {
+  async findById(id: string): Promise<SurveyModel | null> {
     return await this.findSurveyByIdRepository.findById(id);
   }
 }

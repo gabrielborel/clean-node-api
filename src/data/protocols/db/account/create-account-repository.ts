@@ -1,4 +1,4 @@
-import { CreateAccountModel } from "@/domain/use-cases/create-account";
+import { CreateAccountModel } from "@/domain/use-cases/account/create-account";
 import { AccountModel } from "@/domain/models/account";
 
 export interface CreateAccountRepository {

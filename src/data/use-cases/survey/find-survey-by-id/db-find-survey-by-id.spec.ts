@@ -20,7 +20,7 @@ const makeFakeSurvey = (): SurveyModel => ({
 
 const makeFindSurveyByIdRepositoryStub = (): FindSurveyByIdRepository => {
   class FindSurveyByIdRepositoryStub implements FindSurveyByIdRepository {
-    async findById(id: string): Promise<SurveyModel> {
+    async findById(id: string): Promise<SurveyModel | null> {
       return Promise.resolve(makeFakeSurvey());
     }
   }
@@ -67,5 +67,14 @@ describe("DbFindSurveyById Use Case", () => {
     const { sut } = makeSut();
     const survey = await sut.findById("any_id");
     expect(survey).toEqual(makeFakeSurvey());
+  });
+
+  test("should return null if FindSurveyByIdRepository returns null", async () => {
+    const { sut, findSurveyByIdRepositoryStub } = makeSut();
+    vi.spyOn(findSurveyByIdRepositoryStub, "findById").mockResolvedValueOnce(
+      null
+    );
+    const survey = await sut.findById("any_id");
+    expect(survey).toBeNull();
   });
 });
