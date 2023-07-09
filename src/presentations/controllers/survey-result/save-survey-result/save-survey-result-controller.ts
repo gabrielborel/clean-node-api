@@ -1,4 +1,3 @@
-import { InvalidParamError } from "@/presentations/errors";
 import {
   FindSurveyById,
   SaveSurveyResult,
@@ -8,6 +7,7 @@ import {
   forbidden,
   serverError,
   created,
+  InvalidParamError,
 } from "./save-survey-result-protocols";
 
 export class SaveSurveyResultController implements Controller {
