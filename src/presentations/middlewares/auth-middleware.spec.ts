@@ -1,31 +1,13 @@
-import { AccessDeniedError } from "../errors";
-import { forbidden, ok, serverError } from "../helpers/http/http-helper";
+import { mockFindAccountByAccessToken } from "@/presentations/test";
 import { AuthMiddleware } from "./auth-middleware";
 import {
   FindAccountByAccessToken,
-  AccountModel,
   HttpRequest,
+  forbidden,
+  ok,
+  serverError,
+  AccessDeniedError,
 } from "./auth-middleware-protocols";
-
-const makeFakeAccount = (): AccountModel => ({
-  id: "valid_id",
-  name: "valid_name",
-  email: "any_email@mail.com",
-  password: "hashed_password",
-  accessToken: "valid_token",
-});
-
-const makeFindAccountByAccessTokenStub = () => {
-  class FindAccountByAccessTokenStub implements FindAccountByAccessToken {
-    async find(
-      accessToken: string,
-      role?: string | undefined
-    ): Promise<AccountModel | null> {
-      return makeFakeAccount();
-    }
-  }
-  return new FindAccountByAccessTokenStub();
-};
 
 const makeFakeRequest = (): HttpRequest => ({
   headers: {
@@ -39,7 +21,7 @@ type SutType = {
 };
 
 const makeSut = (role?: string): SutType => {
-  const findAccountByAccessToken = makeFindAccountByAccessTokenStub();
+  const findAccountByAccessToken = mockFindAccountByAccessToken();
   const sut = new AuthMiddleware(findAccountByAccessToken, role);
   return { sut, findAccountByAccessTokenStub: findAccountByAccessToken };
 };
@@ -69,7 +51,7 @@ describe("Auth Middleware", () => {
     const { sut, findAccountByAccessTokenStub } = makeSut();
     jest
       .spyOn(findAccountByAccessTokenStub, "find")
-      .mockReturnValueOnce(new Promise((resolve) => resolve(null)));
+      .mockResolvedValueOnce(null);
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()));
@@ -81,7 +63,7 @@ describe("Auth Middleware", () => {
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(
       ok({
-        accountId: "valid_id",
+        accountId: "any_id",
       })
     );
   });
@@ -90,9 +72,7 @@ describe("Auth Middleware", () => {
     const { sut, findAccountByAccessTokenStub } = makeSut();
     jest
       .spyOn(findAccountByAccessTokenStub, "find")
-      .mockReturnValueOnce(
-        new Promise((resolve, reject) => reject(new Error()))
-      );
+      .mockRejectedValueOnce(new Error());
     const httpRequest = makeFakeRequest();
     const httpResponse = await sut.handle(httpRequest);
     expect(httpResponse).toEqual(serverError(new Error()));

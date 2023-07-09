@@ -1,41 +1,13 @@
+import { mockAccountModel } from "@/domain/test";
 import { DbFindAccountByAccessToken } from "./db-find-account-by-access-token";
 import {
-  AccountModel,
   Decrypter,
   FindAccountByAccessTokenRepository,
 } from "./db-find-account-by-access-token-protocols";
-
-const makeFakeAccount = (): AccountModel => ({
-  id: "valid_id",
-  name: "valid_name",
-  email: "any_email@mail.com",
-  password: "hashed_password",
-  accessToken: "valid_token",
-});
-
-const makeDecrypterStub = (): Decrypter => {
-  class DecrypterStub implements Decrypter {
-    async decrypt(value: string): Promise<string | null> {
-      return "haha";
-    }
-  }
-  return new DecrypterStub();
-};
-
-const makeFindAccountByRepositoryStub =
-  (): FindAccountByAccessTokenRepository => {
-    class FindAccountByAccessTokenRepositoryStub
-      implements FindAccountByAccessTokenRepository
-    {
-      async findByAccessToken(
-        accessToken: string,
-        role?: string | undefined
-      ): Promise<AccountModel | null> {
-        return makeFakeAccount();
-      }
-    }
-    return new FindAccountByAccessTokenRepositoryStub();
-  };
+import {
+  mockDecrypter,
+  mockFindAccountByAccessTokenRepository,
+} from "@/data/test";
 
 type SutType = {
   sut: DbFindAccountByAccessToken;
@@ -44,8 +16,9 @@ type SutType = {
 };
 
 const makeSut = (): SutType => {
-  const decrypter = makeDecrypterStub();
-  const findAccountByAccessTokenRepository = makeFindAccountByRepositoryStub();
+  const decrypter = mockDecrypter();
+  const findAccountByAccessTokenRepository =
+    mockFindAccountByAccessTokenRepository();
   const sut = new DbFindAccountByAccessToken(
     decrypter,
     findAccountByAccessTokenRepository
@@ -67,9 +40,7 @@ describe("DbFindAccountByAccessToken Use Case", () => {
 
   test("should return null if Decrypter returns null", async () => {
     const { sut, decrypterStub } = makeSut();
-    jest
-      .spyOn(decrypterStub, "decrypt")
-      .mockReturnValueOnce(new Promise((resolve) => resolve(null)));
+    jest.spyOn(decrypterStub, "decrypt").mockResolvedValueOnce(null);
     const account = await sut.find("any_token");
     expect(account).toBeNull();
   });
@@ -88,7 +59,7 @@ describe("DbFindAccountByAccessToken Use Case", () => {
     const { sut, findAccountByAccessTokenRepositoryStub } = makeSut();
     jest
       .spyOn(findAccountByAccessTokenRepositoryStub, "findByAccessToken")
-      .mockReturnValueOnce(new Promise((resolve) => resolve(null)));
+      .mockResolvedValueOnce(null);
     const account = await sut.find("any_token");
     expect(account).toBeNull();
   });
@@ -96,16 +67,12 @@ describe("DbFindAccountByAccessToken Use Case", () => {
   test("should return an account on success", async () => {
     const { sut } = makeSut();
     const account = await sut.find("any_token");
-    expect(account).toEqual(makeFakeAccount());
+    expect(account).toEqual(mockAccountModel());
   });
 
   test("should throw if Decrypter throws", async () => {
     const { sut, decrypterStub } = makeSut();
-    jest
-      .spyOn(decrypterStub, "decrypt")
-      .mockReturnValueOnce(
-        new Promise((resolve, reject) => reject(new Error()))
-      );
+    jest.spyOn(decrypterStub, "decrypt").mockRejectedValueOnce(new Error());
     const promise = sut.find("any_token");
     await expect(promise).rejects.toThrow();
   });
@@ -114,9 +81,7 @@ describe("DbFindAccountByAccessToken Use Case", () => {
     const { sut, findAccountByAccessTokenRepositoryStub } = makeSut();
     jest
       .spyOn(findAccountByAccessTokenRepositoryStub, "findByAccessToken")
-      .mockReturnValueOnce(
-        new Promise((resolve, reject) => reject(new Error()))
-      );
+      .mockRejectedValueOnce(new Error());
     const promise = sut.find("any_token");
     await expect(promise).rejects.toThrow();
   });

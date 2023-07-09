@@ -12,31 +12,14 @@ import {
   unauthorized,
   ok,
 } from "@/presentations/helpers/http/http-helper";
+import { mockAuthentication, mockValidation } from "@/presentations/test";
 
-const makeFakeRequest = (): HttpRequest => ({
+const mockRequest = (): HttpRequest => ({
   body: {
     email: "any_email@mail.com",
     password: "any_password",
   },
 });
-
-const makeAuthentication = (): Authentication => {
-  class AuthenticationStub implements Authentication {
-    async auth(data: AuthenticationParams): Promise<string> {
-      return new Promise((resolve, reject) => resolve("access_token"));
-    }
-  }
-  return new AuthenticationStub();
-};
-
-const makeValidation = (): Validation => {
-  class ValidationStub implements Validation {
-    validate(data: any): Error | null {
-      return null;
-    }
-  }
-  return new ValidationStub();
-};
 
 type SutType = {
   sut: SignInController;
@@ -45,8 +28,8 @@ type SutType = {
 };
 
 const makeSut = (): SutType => {
-  const authentication = makeAuthentication();
-  const validation = makeValidation();
+  const authentication = mockAuthentication();
+  const validation = mockValidation();
   const signinController = new SignInController(authentication, validation);
   return {
     sut: signinController,
@@ -59,36 +42,30 @@ describe("SignIn Controller", () => {
   test("should call Authentication with correct values", async () => {
     const { sut, authenticationStub } = makeSut();
     const authenticationSpy = jest.spyOn(authenticationStub, "auth");
-    const httpRequest = makeFakeRequest();
+    const httpRequest = mockRequest();
     await sut.handle(httpRequest);
     expect(authenticationSpy).toHaveBeenCalledWith(httpRequest.body);
   });
 
   test("should return 401 if invalid credentials are provided", async () => {
     const { sut, authenticationStub } = makeSut();
-    jest
-      .spyOn(authenticationStub, "auth")
-      .mockReturnValueOnce(new Promise((resolve, reject) => resolve("")));
-    const request = makeFakeRequest();
+    jest.spyOn(authenticationStub, "auth").mockResolvedValueOnce("");
+    const request = mockRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(unauthorized());
   });
 
   test("should return 500 if Authentication throws", async () => {
     const { sut, authenticationStub } = makeSut();
-    jest
-      .spyOn(authenticationStub, "auth")
-      .mockReturnValueOnce(
-        new Promise((resolve, reject) => reject(new Error()))
-      );
-    const request = makeFakeRequest();
+    jest.spyOn(authenticationStub, "auth").mockRejectedValueOnce(new Error());
+    const request = mockRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(serverError(new ServerError("")));
   });
 
   test("should return 200 if valid credentials are provided", async () => {
     const { sut } = makeSut();
-    const request = makeFakeRequest();
+    const request = mockRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(ok({ accessToken: "access_token" }));
   });
@@ -96,16 +73,17 @@ describe("SignIn Controller", () => {
   test("should call Validation with correct values", async () => {
     const { sut, validationStub } = makeSut();
     const validationSpy = jest.spyOn(validationStub, "validate");
-    const request = makeFakeRequest();
+    const request = mockRequest();
     await sut.handle(request);
     expect(validationSpy).toHaveBeenCalledWith(request.body);
   });
 
   test("should return 400 if validation returns an error", async () => {
     const { sut, validationStub } = makeSut();
-    const validationSpy = jest.spyOn(validationStub, "validate");
-    validationSpy.mockReturnValueOnce(new InvalidParamError("any_field"));
-    const request = makeFakeRequest();
+    jest
+      .spyOn(validationStub, "validate")
+      .mockReturnValueOnce(new InvalidParamError("any_field"));
+    const request = mockRequest();
     const response = await sut.handle(request);
     expect(response).toEqual(badRequest(new InvalidParamError("any_field")));
   });

@@ -1,52 +1,22 @@
 import {
+  mockAuthentication,
+  mockCreateAccount,
+  mockValidation,
+} from "@/presentations/test";
+import { SignUpController } from "./signup-controller";
+import {
+  Authentication,
+  CreateAccount,
+  HttpRequest,
   InvalidParamError,
   ParamAlreadyInUseError,
   ServerError,
-} from "../../../errors";
-import {
+  Validation,
   badRequest,
   created,
   forbidden,
   serverError,
-} from "../../../helpers/http/http-helper";
-import { SignUpController } from "./signup-controller";
-import {
-  AccountModel,
-  Authentication,
-  AuthenticationParams,
-  CreateAccount,
-  CreateAccountParams,
-  HttpRequest,
-  Validation,
 } from "./signup-controller-protocols";
-
-const makeCreateAccount = (): CreateAccount => {
-  class CreateAccountStub implements CreateAccount {
-    async create(account: CreateAccountParams): Promise<AccountModel> {
-      const fakeAccount = makeFakeAccount();
-      return new Promise((resolve) => resolve(fakeAccount));
-    }
-  }
-  return new CreateAccountStub();
-};
-
-const makeValidation = (): Validation => {
-  class ValidationStub implements Validation {
-    validate(data: any): Error | null {
-      return null;
-    }
-  }
-  return new ValidationStub();
-};
-
-const makeAuthentication = (): Authentication => {
-  class AuthenticationStub implements Authentication {
-    async auth(data: AuthenticationParams): Promise<string> {
-      return new Promise((resolve, reject) => resolve("access_token"));
-    }
-  }
-  return new AuthenticationStub();
-};
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -54,14 +24,6 @@ const makeFakeRequest = (): HttpRequest => ({
     email: "any_email@mail.com",
     password: "any_password",
   },
-});
-
-const makeFakeAccount = (): AccountModel => ({
-  id: "valid_id",
-  name: "valid_name",
-  email: "valid_email@mail.com",
-  password: "valid_password",
-  accessToken: "valid_token",
 });
 
 type SutType = {
@@ -72,9 +34,9 @@ type SutType = {
 };
 
 const makeSut = (): SutType => {
-  const createAccount = makeCreateAccount();
-  const validation = makeValidation();
-  const authentication = makeAuthentication();
+  const createAccount = mockCreateAccount();
+  const validation = mockValidation();
+  const authentication = mockAuthentication();
   const sut = new SignUpController(createAccount, validation, authentication);
   return {
     sut,

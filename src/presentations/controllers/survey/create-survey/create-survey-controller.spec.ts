@@ -1,31 +1,13 @@
+import { mockCreateSurvey, mockValidation } from "@/presentations/test";
+import { CreateSurveyController } from "./create-survey-controller";
 import {
   CreateSurvey,
-  CreateSurveyParams,
   HttpRequest,
+  Validation,
   badRequest,
   noContent,
   serverError,
-  Validation,
 } from "./create-survey-controller-protocols";
-import { CreateSurveyController } from "./create-survey-controller";
-
-const makeValidationStub = (): Validation => {
-  class ValidationStub implements Validation {
-    validate(data: any): Error | null {
-      return null;
-    }
-  }
-  return new ValidationStub();
-};
-
-const makeCreateSurveyStub = (): CreateSurvey => {
-  class CreateSurveyStub implements CreateSurvey {
-    async create(data: CreateSurveyParams): Promise<void> {
-      return new Promise((resolve) => resolve());
-    }
-  }
-  return new CreateSurveyStub();
-};
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -47,8 +29,8 @@ type SutType = {
 };
 
 const makeSut = (): SutType => {
-  const validationStub = makeValidationStub();
-  const createSurveyStub = makeCreateSurveyStub();
+  const validationStub = mockValidation();
+  const createSurveyStub = mockCreateSurvey();
   const sut = new CreateSurveyController(validationStub, createSurveyStub);
   return { sut, validationStub, createSurveyStub };
 };

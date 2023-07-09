@@ -1,42 +1,12 @@
+import { mockSurveyModels } from "@/domain/test";
+import { mockFindSurveys } from "@/presentations/test";
 import { FindSurveysController } from "./find-surveys-controller";
-import { FindSurveys, SurveyModel } from "./find-surveys-controller-protocols";
-import { noContent, ok, serverError } from "../../../helpers/http/http-helper";
-
-const makeFakeSurveys = (): SurveyModel[] => {
-  return [
-    {
-      id: "any_id",
-      question: "any_question",
-      answers: [
-        {
-          image: "any_image",
-          answer: "any_answer",
-        },
-      ],
-      date: new Date(),
-    },
-    {
-      id: "any_id_2",
-      question: "any_question_2",
-      answers: [
-        {
-          image: "any_image_2",
-          answer: "any_answer_2",
-        },
-      ],
-      date: new Date(),
-    },
-  ];
-};
-
-const makeFindSurveysStub = (): FindSurveys => {
-  class FindSurveysStub {
-    async find(): Promise<SurveyModel[]> {
-      return Promise.resolve(makeFakeSurveys());
-    }
-  }
-  return new FindSurveysStub();
-};
+import {
+  FindSurveys,
+  noContent,
+  ok,
+  serverError,
+} from "./find-surveys-controller-protocols";
 
 type SutType = {
   sut: FindSurveysController;
@@ -44,7 +14,7 @@ type SutType = {
 };
 
 const makeSut = (): SutType => {
-  const findSurveys = makeFindSurveysStub();
+  const findSurveys = mockFindSurveys();
   const sut = new FindSurveysController(findSurveys);
   return { sut, findSurveysStub: findSurveys };
 };
@@ -68,14 +38,12 @@ describe("FindSurveysController", () => {
   test("should return 200 on success", async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle({});
-    expect(httpResponse).toEqual(ok(makeFakeSurveys()));
+    expect(httpResponse).toEqual(ok(mockSurveyModels()));
   });
 
   test("should return 204 if no surveys found", async () => {
     const { sut, findSurveysStub } = makeSut();
-    jest.spyOn(findSurveysStub, "find").mockImplementationOnce(async () => {
-      return Promise.resolve([]);
-    });
+    jest.spyOn(findSurveysStub, "find").mockResolvedValueOnce([]);
     const httpResponse = await sut.handle({});
     expect(httpResponse).toEqual(noContent());
   });

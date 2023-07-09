@@ -1,6 +1,11 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { MongoHelper } from "../helpers/mongo-helper";
 import { MongoAccountRepository } from "./mongo-account-repository";
+import {
+  mockCreateAccountParams,
+  mockCreateAccountParamsWithAccessToken,
+  mockCreateAccountParamsWithAccessTokenAndAccessToken,
+} from "@/domain/test";
 
 const makeSut = (): MongoAccountRepository => {
   return new MongoAccountRepository();
@@ -27,11 +32,7 @@ describe("MongoDB Account Repository", () => {
 
   test("should return an account on createAccount success", async () => {
     const sut = makeSut();
-    const accountData = {
-      name: "any_name",
-      email: "valid_email@mail.com",
-      password: "any_password",
-    };
+    const accountData = mockCreateAccountParams();
     const account = await sut.create(accountData);
     expect(account).toBeTruthy();
     expect(account.id).toBeTruthy();
@@ -42,11 +43,7 @@ describe("MongoDB Account Repository", () => {
 
   test("should return an account on findByEmail success", async () => {
     const sut = makeSut();
-    const accountData = {
-      name: "any_name",
-      email: "valid_email@mail.com",
-      password: "any_password",
-    };
+    const accountData = mockCreateAccountParams();
     await sut.create(accountData);
     const account = await sut.findByEmail(accountData.email);
     expect(account).toBeTruthy();
@@ -64,11 +61,7 @@ describe("MongoDB Account Repository", () => {
 
   test("should update the account accessToken on updateAccessToken success", async () => {
     const sut = makeSut();
-    const accountData = {
-      name: "any_name",
-      email: "valid_email@mail.com",
-      password: "any_password",
-    };
+    const accountData = mockCreateAccountParams();
     const { id } = await sut.create(accountData);
     expect(id).toBeTruthy();
     let account = await sut.findByEmail(accountData.email);
@@ -82,12 +75,7 @@ describe("MongoDB Account Repository", () => {
 
   test("should return an account on findByAccessToken success, without role", async () => {
     const sut = makeSut();
-    const accountData = {
-      name: "any_name",
-      email: "valid_email@mail.com",
-      password: "any_password",
-      accessToken: "any_token",
-    };
+    const accountData = mockCreateAccountParamsWithAccessToken();
     await sut.create(accountData);
     const account = await sut.findByAccessToken(accountData.accessToken);
     expect(account).toBeTruthy();
@@ -99,13 +87,7 @@ describe("MongoDB Account Repository", () => {
 
   test("should return an account on findByAccessToken success, with admin role", async () => {
     const sut = makeSut();
-    const accountData = {
-      name: "any_name",
-      email: "valid_email@mail.com",
-      password: "any_password",
-      accessToken: "any_token",
-      role: "admin",
-    };
+    const accountData = mockCreateAccountParamsWithAccessTokenAndAccessToken();
     await sut.create(accountData);
     const account = await sut.findByAccessToken("any_token", "admin");
     expect(account).toBeTruthy();
@@ -117,12 +99,7 @@ describe("MongoDB Account Repository", () => {
 
   test("should return null on findByAccessToken success, with invalid role", async () => {
     const sut = makeSut();
-    const accountData = {
-      name: "any_name",
-      email: "valid_email@mail.com",
-      password: "any_password",
-      accessToken: "any_token",
-    };
+    const accountData = mockCreateAccountParamsWithAccessToken();
     await sut.create(accountData);
     const account = await sut.findByAccessToken("any_token", "admin");
     expect(account).toBeNull();
@@ -130,13 +107,7 @@ describe("MongoDB Account Repository", () => {
 
   test("should return an account on findByAccessToken success if user is admin", async () => {
     const sut = makeSut();
-    const accountData = {
-      name: "any_name",
-      email: "valid_email@mail.com",
-      password: "any_password",
-      accessToken: "any_token",
-      role: "admin",
-    };
+    const accountData = mockCreateAccountParamsWithAccessTokenAndAccessToken();
     await sut.create(accountData);
     const account = await sut.findByAccessToken("any_token");
     expect(account).toBeTruthy();

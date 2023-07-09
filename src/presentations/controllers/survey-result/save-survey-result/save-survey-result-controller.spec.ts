@@ -1,54 +1,15 @@
+import { mockSurveyResultModel } from "@/domain/test";
+import { mockFindSurveyById, mockSaveSurveyResult } from "@/presentations/test";
 import { SaveSurveyResultController } from "./save-survey-result-controller";
 import {
   FindSurveyById,
   HttpRequest,
+  InvalidParamError,
   SaveSurveyResult,
-  SaveSurveyResultParams,
-  SurveyModel,
+  created,
   forbidden,
   serverError,
-  SurveyResultModel,
-  InvalidParamError,
-  created,
 } from "./save-survey-result-protocols";
-
-const makeFakeSurvey = (): SurveyModel => ({
-  id: "any_survey_id",
-  question: "any_question",
-  answers: [
-    {
-      image: "any_image",
-      answer: "any_answer",
-    },
-  ],
-  date: new Date(),
-});
-
-const makeFakeSurveyResult = (): SurveyResultModel => ({
-  id: "any_id",
-  surveyId: "any_survey_id",
-  accountId: "any_account_id",
-  answer: "any_answer",
-  date: new Date(),
-});
-
-const makeFindSurveyByIdStub = (): FindSurveyById => {
-  class FindSurveyByIdStub implements FindSurveyById {
-    async findById(id: string): Promise<SurveyModel | null> {
-      return Promise.resolve(makeFakeSurvey());
-    }
-  }
-  return new FindSurveyByIdStub();
-};
-
-const makeSaveSurveyResultStub = (): SaveSurveyResult => {
-  class SaveSurveyResultStub implements SaveSurveyResult {
-    save(data: SaveSurveyResultParams): Promise<SurveyResultModel> {
-      return Promise.resolve(makeFakeSurveyResult());
-    }
-  }
-  return new SaveSurveyResultStub();
-};
 
 const makeFakeRequest = (): HttpRequest => ({
   accountId: "any_account_id",
@@ -67,8 +28,8 @@ type SutType = {
 };
 
 const makeSut = (): SutType => {
-  const findSurveyById = makeFindSurveyByIdStub();
-  const saveSurveyResult = makeSaveSurveyResultStub();
+  const findSurveyById = mockFindSurveyById();
+  const saveSurveyResult = mockSaveSurveyResult();
   const sut = new SaveSurveyResultController(findSurveyById, saveSurveyResult);
   return {
     sut,
@@ -140,6 +101,6 @@ describe("SaveSurveyResultController", () => {
   test("should return 201 on success", async () => {
     const { sut } = makeSut();
     const httpResponse = await sut.handle(makeFakeRequest());
-    expect(httpResponse).toEqual(created(makeFakeSurveyResult()));
+    expect(httpResponse).toEqual(created(mockSurveyResultModel()));
   });
 });
