@@ -1,24 +1,15 @@
-import { mockCreateAccountRepository, mockHasher } from "@/data/test";
+import {
+  mockCreateAccountRepository,
+  mockFindAccountByEmailRepository,
+  mockHasher,
+} from "@/data/test";
 import { DbCreateAccount } from "./db-create-account";
 import {
-  AccountModel,
-  CreateAccountParams,
   CreateAccountRepository,
   FindAccountByEmailRepository,
   Hasher,
 } from "./db-create-account-protocols";
 import { mockAccountModel, mockCreateAccountParams } from "@/domain/test";
-
-const mockFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
-  class FindAccountByEmailRepositoryStub
-    implements FindAccountByEmailRepository
-  {
-    async findByEmail(email: string): Promise<AccountModel | null> {
-      return Promise.resolve(null);
-    }
-  }
-  return new FindAccountByEmailRepositoryStub();
-};
 
 type SutType = {
   sut: DbCreateAccount;
@@ -31,6 +22,9 @@ const makeSut = (): SutType => {
   const hasherStub = mockHasher();
   const createAccountRepositoryStub = mockCreateAccountRepository();
   const findAccountByEmailRepositoryStub = mockFindAccountByEmailRepository();
+  jest
+    .spyOn(findAccountByEmailRepositoryStub, "findByEmail")
+    .mockResolvedValue(null);
   const sut = new DbCreateAccount(
     hasherStub,
     createAccountRepositoryStub,
